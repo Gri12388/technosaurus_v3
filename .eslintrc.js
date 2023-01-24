@@ -19,5 +19,6 @@ module.exports = {
     'vuejs-accessibility/label-has-for': 0,
     'import/prefer-default-export': 0,
     'no-else-return': 0,
+    'import/extensions': 0,
   },
 };

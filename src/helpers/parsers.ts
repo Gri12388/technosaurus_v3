@@ -2,8 +2,22 @@ import { ProdCardType } from '@/types/catalogTypes';
 
 export const parseProducts = (res: unknown) => {
   const cards: ProdCardType[] = [];
+  let pages = 0;
+  let total = 0;
 
   if (typeof res === 'object' && res !== null) {
+    if ('pagination' in res) {
+      if (typeof res.pagination === 'object' && res.pagination !== null) {
+        if ('pages' in res.pagination && typeof res.pagination.pages === 'number') {
+          pages = res.pagination.pages;
+        } else throw new Error('Field "pages" is absent or is not a number');
+
+        if ('total' in res.pagination && typeof res.pagination.total === 'number') {
+          total = res.pagination.total;
+        } else throw new Error('Field "total" is absent or is not a number');
+      } else throw new Error('Field "pagination" is not an object');
+    } else throw new Error('Response does not contain "pagination" field');
+
     if ('items' in res) {
       if (Array.isArray(res.items)) {
         res.items.forEach((item: unknown) => {
@@ -37,7 +51,7 @@ export const parseProducts = (res: unknown) => {
 
           cards.push(card);
         });
-        return cards;
+        return { cards, pages, total };
       } else throw new Error('Field "items" is not an array');
     } else throw new Error('Response does not contain "items" field');
   } else throw new Error('Response is not an object');
