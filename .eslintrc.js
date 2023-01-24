@@ -14,5 +14,10 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'linebreak-style': 0,
+    'max-len': 0,
+    'vuejs-accessibility/label-has-for': 0,
+    'import/prefer-default-export': 0,
+    'no-else-return': 0,
   },
 };
