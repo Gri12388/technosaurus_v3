@@ -7,7 +7,7 @@
 
     <div class="content__catalog">
       <FilterView />
-      <GalleryView :cards="cards" />
+      <GalleryView :cards="cards" :pages="pages" v-model:page="page" />
     </div>
   </main>
 </template>
@@ -19,6 +19,7 @@ import {
   onMounted,
   ref,
   Ref,
+  watch,
 } from 'vue';
 
 import FilterView from '@/components/catalog/FiltersView.vue';
@@ -35,7 +36,6 @@ const limit = ref(3);
 const pages = ref(0);
 const total = ref(0);
 const cards: Ref<ProdCardType[]> = ref([]);
-
 const productWord = computed(() => formatProduct(total.value));
 
 const loadProducts = async () => {
@@ -53,5 +53,6 @@ const loadProducts = async () => {
   }
 };
 
+watch(page, () => loadProducts());
 onMounted(() => loadProducts());
 </script>

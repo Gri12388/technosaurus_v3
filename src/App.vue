@@ -1,11 +1,21 @@
 <template>
-  <HeaderView />
-  <router-view/>
-  <FooterView />
+  <v-app>
+    <v-main>
+      <router-view/>
+    </v-main>
+  </v-app>
 </template>
 
-<script setup lang="ts">
-import FooterView from '@/components/common/FooterView.vue';
-import HeaderView from '@/components/common/HeaderView.vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
+export default defineComponent({
+  name: 'App',
+
+  data() {
+    return {
+      //
+    };
+  },
+});
 </script>

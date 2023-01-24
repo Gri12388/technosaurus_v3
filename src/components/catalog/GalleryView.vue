@@ -11,24 +11,38 @@
     </ul>
 
     <v-pagination
-      v-model="page"
-      :length="6"
+      v-model="pageHandler"
+      :length="pages"
     ></v-pagination>
   </section>
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue';
+import {
+  defineEmits,
+  defineProps,
+  computed,
+} from 'vue';
 import ProdCard from '@/components/catalog/ProdCard.vue';
 
 import type { ProdCardType } from '@/types/catalogTypes';
 
 type Props = {
   cards: ProdCardType[];
-}
+  page: number;
+  pages: number;
+};
 
-defineProps<Props>();
+type Emits = {
+  (e: 'update:page', value: number): void,
+};
 
-const page = ref(1);
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
+
+const pageHandler = computed({
+  get: () => props.page,
+  set: (value: number) => emit('update:page', value),
+});
 
 </script>
