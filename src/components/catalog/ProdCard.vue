@@ -1,14 +1,14 @@
 <template>
   <li class="catalog__item">
     <a class="catalog__pic" href="#">
-      <img :src="image" alt="x" />
+      <img :src="card.image" alt="curTitle" />
     </a>
 
     <h3 class="catalog__title">
-      <a href="#"> hello </a>
+      <a href="#"> {{ curTitle }} </a>
     </h3>
 
-    <span class="catalog__price">  ₽ </span>
+    <span class="catalog__price"> {{ formattedPrice }} ₽ </span>
 
     <!-- <ul class="colors colors--black">
       <li class="colors__item">
@@ -37,13 +37,20 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { computed, defineProps, ref } from 'vue';
 
-// import { formatNumber } from '@/helpers/formatters';
+import { formatNumber } from '@/helpers/formatters';
+
+import type { ProdCardType } from '@/types/catalogTypes';
 
 type Props = {
-  image: string;
+  card: ProdCardType;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const curTitle = ref(props.card.offers[0].title);
+const curPrice = ref(props.card.offers[0].price);
+
+const formattedPrice = computed(() => formatNumber(curPrice.value));
 </script>

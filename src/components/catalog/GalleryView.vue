@@ -4,7 +4,7 @@
       <ProdCard
         v-for="card in cards"
         :key="card.id"
-        :image="card.image"
+        :card="card"
       />
     </ul>
 
