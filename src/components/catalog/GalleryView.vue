@@ -4,8 +4,6 @@
       <ProdCard
         v-for="card in cards"
         :key="card.id"
-        :title="card.title"
-        :price="card.price"
         :image="card.image"
       />
     </ul>

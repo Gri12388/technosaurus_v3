@@ -1,14 +1,14 @@
 <template>
   <li class="catalog__item">
     <a class="catalog__pic" href="#">
-      <img :src="image" :alt="title" />
+      <img :src="image" alt="x" />
     </a>
 
     <h3 class="catalog__title">
-      <a href="#"> {{ title }} </a>
+      <a href="#"> hello </a>
     </h3>
 
-    <span class="catalog__price"> {{ formatNumber(price) }} ₽ </span>
+    <span class="catalog__price">  ₽ </span>
 
     <!-- <ul class="colors colors--black">
       <li class="colors__item">
@@ -39,11 +39,9 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 
-import { formatNumber } from '@/helpers/formatters';
+// import { formatNumber } from '@/helpers/formatters';
 
 type Props = {
-  title: string;
-  price: number;
   image: string;
 }
 
