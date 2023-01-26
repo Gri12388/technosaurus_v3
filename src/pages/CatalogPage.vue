@@ -26,7 +26,7 @@ import FilterView from '@/components/catalog/FiltersView.vue';
 import GalleryView from '@/components/catalog/GalleryView.vue';
 
 import { origin, productPath } from '@/constants/paths';
-import { formatProduct } from '@/helpers/formatters';
+import { formatCards, formatProduct } from '@/helpers/formatters';
 import { parseProducts } from '@/helpers/parsers';
 
 import type { ProdCardType } from '@/types/catalogTypes';
@@ -45,7 +45,7 @@ const loadProducts = async () => {
   try {
     const res = await axios.get(path, config);
     const prods = parseProducts(res.data);
-    cards.value = prods.cards;
+    cards.value = formatCards(prods.cards);
     pages.value = prods.pages;
     total.value = prods.total;
   } catch (err) {

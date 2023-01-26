@@ -8,40 +8,31 @@
       <a href="#"> {{ curTitle }} </a>
     </h3>
 
-    <span class="catalog__price"> {{ formattedPrice }} ₽ </span>
+    <span class="catalog__price"> {{ cmpPrice }} ₽ </span>
 
-    <!-- <ul class="colors colors--black">
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#73B6EA" checked="" />
-          <span class="colors__value" style="background-color: #73b6ea">
-          </span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#8BE000" />
-          <span class="colors__value" style="background-color: #8be000">
-          </span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#222" />
-          <span class="colors__value" style="background-color: #222">
-          </span>
-        </label>
-      </li>
-    </ul> -->
+    <ul class="colors colors--black">
+      <ColorView
+        v-for="color in card.colors"
+        :key="`${card.id}_${color.id}`"
+        :input-id="`${card.id}_${color.id}`"
+        :name="card.id.toString()"
+        :color="color"
+        v-model:cur-color="cmpCurColor"
+      />
+    </ul>
   </li>
 </template>
 
 <script setup lang="ts">
 import { computed, defineProps, ref } from 'vue';
 
+import ColorView from '@/components/catalog/ColorView.vue';
+
 import { formatNumber } from '@/helpers/formatters';
+import { initCurColor, initCurPrice, initCurTitle } from '@/helpers/helpers';
 
 import type { ProdCardType } from '@/types/catalogTypes';
+import { COLOR_PROP_ID } from '@/constants/constants';
 
 type Props = {
   card: ProdCardType;
@@ -49,8 +40,26 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const curTitle = ref(props.card.offers[0].title);
-const curPrice = ref(props.card.offers[0].price);
+const curColor = ref(initCurColor(props.card));
+const curTitle = ref(initCurTitle(props.card));
+const curPrice = ref(initCurPrice(props.card));
 
-const formattedPrice = computed(() => formatNumber(curPrice.value));
+const cmpCurColor = computed({
+  get: () => curColor.value,
+  set: (value: number | null) => {
+    if (props.card.mainProp.id === COLOR_PROP_ID && value) {
+      const found = props.card.colors.find((item) => item.id === value);
+      if (found && found.offer) {
+        curTitle.value = found.offer.title;
+        curPrice.value = found.offer.price;
+      }
+    }
+    return value;
+  },
+});
+
+const cmpPrice = computed(() => {
+  if (typeof curPrice.value === 'number') return formatNumber(curPrice.value);
+  else return curPrice.value;
+});
 </script>
