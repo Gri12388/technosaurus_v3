@@ -4,6 +4,7 @@ import {
   OfferType,
   ProdCardType,
 } from '@/types/catalogTypes';
+import { CategoryType } from '@/types/storeTypes';
 
 const parsePagination = (value: unknown) => {
   let pages = 0;
@@ -191,22 +192,57 @@ const parseItems = (value: unknown) => {
   } else throw new Error('Field "items" is not an array');
 };
 
-export const parseProducts = (res: unknown) => {
+export const parseProducts = (value: unknown) => {
   let cards: ProdCardType[] = [];
   let pages = 0;
   let total = 0;
 
-  if (typeof res === 'object' && res !== null) {
-    if ('pagination' in res) {
-      const pagination = parsePagination(res.pagination);
+  if (typeof value === 'object' && value !== null) {
+    if ('pagination' in value) {
+      const pagination = parsePagination(value.pagination);
       pages = pagination.pages;
       total = pagination.total;
-    } else throw new Error('Response does not contain "pagination" field');
+    } else throw new Error('Field "value.pagination" is absent');
 
-    if ('items' in res) {
-      cards = parseItems(res.items);
-    } else throw new Error('Response does not contain "items" field');
-  } else throw new Error('Response is not an object');
+    if ('items' in value) {
+      cards = parseItems(value.items);
+    } else throw new Error('Field "value.items" is absent');
+  } else throw new Error('Variable "value" is not an object');
 
   return { cards, pages, total };
+};
+
+export const parseCategory = (value: unknown) => {
+  const category: CategoryType = {
+    id: -1,
+    title: '',
+  };
+
+  if (typeof value === 'object' && value !== null) {
+    if ('id' in value && typeof value.id === 'number') category.id = value.id;
+    else throw new Error('Field "value.id" is absent or is not type of "number"');
+
+    if ('title' in value && typeof value.title === 'string') category.title = value.title;
+    else throw new Error('Field "value.title" is absent or is not type of "string"');
+  } else throw new Error('Variable "value" is not an object');
+
+  return category;
+};
+
+export const parseCategories = (value: unknown) => {
+  if (typeof value === 'object' && value !== null) {
+    if ('items' in value) {
+      if (Array.isArray(value.items)) {
+        return value.items.reduce((acc: CategoryType[], item: unknown) => {
+          try {
+            const card = parseCategory(item);
+            return [...acc, card];
+          } catch (err) {
+            console.error(err);
+            return acc;
+          }
+        }, []);
+      } else throw new Error('Field "value.items" is not an array');
+    } else throw new Error('Field "value.items" is absent');
+  } else throw new Error('Variable "value" is not an object');
 };
