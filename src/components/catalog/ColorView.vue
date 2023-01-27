@@ -7,7 +7,7 @@
         type="radio"
         :name="name"
         :value="color.id"
-        v-model="cmpCurColor"
+        v-model="cmpCurColorId"
       />
       <span class="colors__value" :style="{ 'background-color': color.code }">
       </span>
@@ -23,20 +23,20 @@ import type { ColorType } from '@/types/catalogTypes';
 type Props = {
   inputId: string;
   name: string;
-  curColor: number | null;
+  curColorId: number | null;
   color: ColorType;
 };
 
 type Emits = {
-  (e: 'update:curColor', value: number | null): void,
+  (e: 'update:curColorId', value: number | null): void,
 };
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const cmpCurColor = computed({
-  get: () => props.curColor,
-  set: (value: number | null) => emit('update:curColor', value),
+const cmpCurColorId = computed({
+  get: () => props.curColorId,
+  set: (value: number | null) => emit('update:curColorId', value),
 });
 
 </script>

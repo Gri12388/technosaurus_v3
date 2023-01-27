@@ -15,9 +15,21 @@
         v-for="color in card.colors"
         :key="`${card.id}_${color.id}`"
         :input-id="`${card.id}_${color.id}`"
-        :name="card.id.toString()"
+        :name="`color_${card.id}`"
         :color="color"
-        v-model:cur-color="cmpCurColor"
+        v-model:cur-color-id="cmpCurColorId"
+      />
+    </ul>
+    <p class="main-prop">{{ mainProp }}</p>
+    <ul class="mainPropList">
+      <MainPropView
+        v-for="offer in card.offers"
+          :key="`${card.id}_${offer.id}`"
+          :input-id="`${card.id}_${offer.id}`"
+          :main-prop-id="card.mainProp.id"
+          :name="`mainProp_${card.id}`"
+          :offer="offer"
+          v-model:cur-offer-id="cmpCurOfferId"
       />
     </ul>
   </li>
@@ -27,9 +39,16 @@
 import { computed, defineProps, ref } from 'vue';
 
 import ColorView from '@/components/catalog/ColorView.vue';
+import MainPropView from '@/components/catalog/MainPropView.vue';
 
 import { formatNumber } from '@/helpers/formatters';
-import { initCurColor, initCurPrice, initCurTitle } from '@/helpers/helpers';
+import {
+  initCurColorId,
+  initCurOfferId,
+  initCurPrice,
+  initCurTitle,
+  initMainProp,
+} from '@/helpers/helpers';
 
 import type { ProdCardType } from '@/types/catalogTypes';
 import { COLOR_PROP_ID } from '@/constants/constants';
@@ -40,12 +59,14 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const curColor = ref(initCurColor(props.card));
+const curColorId = ref(initCurColorId(props.card));
+const curOfferId = ref(initCurOfferId(props.card));
 const curTitle = ref(initCurTitle(props.card));
 const curPrice = ref(initCurPrice(props.card));
+const mainProp = ref(initMainProp(props.card));
 
-const cmpCurColor = computed({
-  get: () => curColor.value,
+const cmpCurColorId = computed({
+  get: () => curColorId.value,
   set: (value: number | null) => {
     if (props.card.mainProp.id === COLOR_PROP_ID && value) {
       const found = props.card.colors.find((item) => item.id === value);
@@ -58,8 +79,35 @@ const cmpCurColor = computed({
   },
 });
 
+const cmpCurOfferId = computed({
+  get: () => curOfferId.value,
+  set: (value: number | null) => {
+    if (props.card.mainProp.id !== COLOR_PROP_ID && value) {
+      const found = props.card.offers.find((item) => item.id === value);
+      if (found) {
+        curTitle.value = found.title;
+        curPrice.value = found.price;
+      }
+    }
+    return value;
+  },
+});
+
 const cmpPrice = computed(() => {
   if (typeof curPrice.value === 'number') return formatNumber(curPrice.value);
   else return curPrice.value;
 });
 </script>
+
+<style scoped>
+.main-prop {
+  padding: 8px 0;
+}
+</style>
+
+<style >
+.mainPropList {
+  display: flex;
+  list-style-type: none;
+}
+</style>
