@@ -23,7 +23,7 @@ import {
 } from 'vue';
 import ProdCard from '@/components/catalog/ProdCard.vue';
 
-import type { ProdCardType } from '@/types/catalogTypes';
+import type { ProdCardType } from '@/types/types';
 
 type Props = {
   cards: ProdCardType[];

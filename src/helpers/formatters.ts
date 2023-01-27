@@ -1,5 +1,5 @@
 import { COLOR_PROP_ID } from '@/constants/constants';
-import { ColorType, OfferType, ProdCardType } from '@/types/catalogTypes';
+import { ColorType, OfferType, ProdCardType } from '@/types/types';
 
 export const formatNumber = (value: number) => value.toLocaleString('ru');
 

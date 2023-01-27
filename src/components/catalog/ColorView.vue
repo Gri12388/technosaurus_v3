@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed, defineEmits, defineProps } from 'vue';
 
-import type { ColorType } from '@/types/catalogTypes';
+import type { ColorType } from '@/types/types';
 
 type Props = {
   inputId: string;

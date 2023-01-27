@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { computed, defineEmits, defineProps } from 'vue';
 import { useStore } from '@/store/store';
-import type { CategoryType } from '@/types/storeTypes';
+import type { CategoryType } from '@/types/types';
 
 type Props = {
   curCateg: number | null;
@@ -26,9 +26,9 @@ type Emits = {
   (e: 'update:curCateg', value: number | null): void,
 };
 
+const store = useStore();
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
-const store = useStore();
 
 const cmpCategories = computed<CategoryType[]>(() => store.getters.getCategories);
 const cmpCurCateg = computed({

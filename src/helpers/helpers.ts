@@ -1,5 +1,5 @@
 import { COLOR_PROP_ID } from '@/constants/constants';
-import { ProdCardType } from '@/types/catalogTypes';
+import { ProdCardType } from '@/types/types';
 
 export const initCurColorId = (card: ProdCardType) => {
   if (card.colors.length > 0) return card.colors[0].id;

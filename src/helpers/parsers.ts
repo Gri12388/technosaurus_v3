@@ -1,10 +1,10 @@
 import {
+  CategoryType,
   ColorType,
   MainPropType,
   OfferType,
   ProdCardType,
-} from '@/types/catalogTypes';
-import { CategoryType } from '@/types/storeTypes';
+} from '@/types/types';
 
 const parsePagination = (value: unknown) => {
   let pages = 0;
@@ -91,11 +91,46 @@ const parseColor = (value: unknown) => {
   return color;
 };
 
+const parseColor2 = (value: unknown) => {
+  const color: ColorType = {
+    id: -1,
+    code: '',
+    title: '',
+  };
+
+  if (typeof value === 'object' && value !== null) {
+    if ('id' in value && typeof value.id === 'number') color.id = value.id;
+    else throw new Error('Field "value.color.id" is absent or is not type of "number"');
+
+    if ('code' in value && typeof value.code === 'string') color.code = value.code;
+    else throw new Error('Field "value.color.code" is absent or is not type of "string"');
+
+    if ('title' in value && typeof value.title === 'string') color.title = value.title;
+    else throw new Error('Field "value.color.title" is absent or is not type of "string"');
+  } else throw Error('Field "value.color" is not an object');
+
+  return color;
+};
+
 const parseColors = (value: unknown) => {
   if (Array.isArray(value)) {
     return value.reduce((acc: ColorType[], item: unknown) => {
       try {
         const color = parseColor(item);
+        return [...acc, color];
+      } catch (err) {
+        console.error(err);
+        return acc;
+      }
+    }, []);
+  } else throw new Error('Variable "value" is not an array');
+};
+
+const parseColors2 = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value.reduce((acc: ColorType[], item: unknown) => {
+      try {
+        const color = parseColor2(item);
         return [...acc, color];
       } catch (err) {
         console.error(err);
@@ -230,19 +265,39 @@ export const parseCategory = (value: unknown) => {
 };
 
 export const parseCategories = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value.reduce((acc: CategoryType[], item: unknown) => {
+      try {
+        const card = parseCategory(item);
+        return [...acc, card];
+      } catch (err) {
+        console.error(err);
+        return acc;
+      }
+    }, []);
+  } else throw new Error('Variable "value" is not an array');
+};
+
+export const parseCategoryRes = (value: unknown) => {
+  let categories: CategoryType[] = [];
+
   if (typeof value === 'object' && value !== null) {
     if ('items' in value) {
-      if (Array.isArray(value.items)) {
-        return value.items.reduce((acc: CategoryType[], item: unknown) => {
-          try {
-            const card = parseCategory(item);
-            return [...acc, card];
-          } catch (err) {
-            console.error(err);
-            return acc;
-          }
-        }, []);
-      } else throw new Error('Field "value.items" is not an array');
+      categories = parseCategories(value.items);
     } else throw new Error('Field "value.items" is absent');
   } else throw new Error('Variable "value" is not an object');
+
+  return categories;
+};
+
+export const parseColorRes = (value: unknown) => {
+  let colors: ColorType[] = [];
+
+  if (typeof value === 'object' && value !== null) {
+    if ('items' in value) {
+      colors = parseColors2(value.items);
+    } else throw new Error('Field "value.items" is absent');
+  } else throw new Error('Variable "value" is not an object');
+
+  return colors;
 };

@@ -18,6 +18,9 @@ import { useStore } from '@/store/store';
 
 const store = useStore();
 
-onMounted(() => store.dispatch('loadCategories'));
+onMounted(() => {
+  store.dispatch('loadCategories');
+  store.dispatch('loadColors');
+});
 
 </script>

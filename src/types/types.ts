@@ -18,6 +18,11 @@ export type ColorType = {
   offer?: OfferType;
 };
 
+export type CategoryType = {
+  id: number;
+  title: string;
+};
+
 export type ProdCardType = {
   id: number;
   image: string;

@@ -50,7 +50,7 @@ import {
   initMainProp,
 } from '@/helpers/helpers';
 
-import type { ProdCardType } from '@/types/catalogTypes';
+import type { ProdCardType } from '@/types/types';
 import { COLOR_PROP_ID } from '@/constants/constants';
 
 type Props = {

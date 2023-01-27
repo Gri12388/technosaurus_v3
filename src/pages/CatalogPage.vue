@@ -29,7 +29,7 @@ import { origin, productPath } from '@/constants/paths';
 import { formatCards, formatProduct } from '@/helpers/formatters';
 import { parseProducts } from '@/helpers/parsers';
 
-import type { ProdCardType } from '@/types/catalogTypes';
+import type { ProdCardType } from '@/types/types';
 
 const page = ref(1);
 const limit = ref(3);

@@ -16,7 +16,7 @@ import { computed, defineEmits, defineProps } from 'vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
 
-import type { OfferType } from '@/types/catalogTypes';
+import type { OfferType } from '@/types/types';
 
 type Props = {
   inputId: string;
