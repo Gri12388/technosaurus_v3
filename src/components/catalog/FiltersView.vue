@@ -5,7 +5,7 @@
     <form class="filter__form form">
       <PriceRange v-model:price-max="priceMax" v-model:price-min="priceMin"/>
 
-      <CategorySelect />
+      <CategorySelect v-model:cur-categ="curCateg"/>
 
       <ColorRadio />
 
@@ -31,4 +31,5 @@ import PriceRange from '@/components/catalog/PriceRange.vue';
 
 const priceMin = ref<number | null>(null);
 const priceMax = ref<number | null>(null);
+const curCateg = ref<number | null>(null);
 </script>
