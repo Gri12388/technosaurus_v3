@@ -1,5 +1,5 @@
 import { categoriesPath, colorsPath, origin } from '@/constants/paths';
-import { parseCategoryRes, parseColorRes } from '@/helpers/parsers';
+import { parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
 import { CategoryType, ColorType } from '@/types/types';
 import axios from 'axios';
 import { InjectionKey } from 'vue';
@@ -42,7 +42,7 @@ export const store = createStore<State>({
       const path = `${origin}${categoriesPath}`;
       try {
         const res = await axios.get(path);
-        const categories = parseCategoryRes(res.data);
+        const categories = parseCategoriesObj(res.data);
         commit('setCategories', { categories });
       } catch (err) {
         console.error(err);
@@ -52,7 +52,7 @@ export const store = createStore<State>({
       const path = `${origin}${colorsPath}`;
       try {
         const res = await axios.get(path);
-        const colors = parseColorRes(res.data);
+        const colors = parseColorsObj(res.data);
         commit('setColors', { colors });
       } catch (err) {
         console.error(err);
