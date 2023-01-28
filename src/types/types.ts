@@ -18,9 +18,22 @@ export type ColorType = {
   offer?: OfferType;
 };
 
+export type PropertyValueType = {
+  value: string;
+  count: number;
+};
+
+export type PropertyType = {
+  id: number;
+  title: string;
+  code: string;
+  values: PropertyValueType[];
+};
+
 export type CategoryType = {
   id: number;
   title: string;
+  properties?: PropertyType[];
 };
 
 export type ProdCardType = {

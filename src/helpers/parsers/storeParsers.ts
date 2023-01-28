@@ -1,22 +1,5 @@
 import { CategoryType, ColorType } from '@/types/types';
-import { parseColor } from '@/helpers/parsers/commonParsers';
-
-export const parseCategory = (category: unknown) => {
-  const temp: CategoryType = {
-    id: -1,
-    title: '',
-  };
-
-  if (typeof category === 'object' && category !== null) {
-    if ('id' in category && typeof category.id === 'number') temp.id = category.id;
-    else throw new Error('Field "category.id" is absent or is not type of "number"');
-
-    if ('title' in category && typeof category.title === 'string') temp.title = category.title;
-    else throw new Error('Field "category.title" is absent or is not type of "string"');
-  } else throw new Error('Variable "category" is not an object');
-
-  return temp;
-};
+import { parseCategory, parseColor } from '@/helpers/parsers/commonParsers';
 
 export const parseCategories = (categories: unknown) => {
   if (Array.isArray(categories)) {

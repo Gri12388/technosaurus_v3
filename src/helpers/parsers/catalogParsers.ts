@@ -1,7 +1,12 @@
 import {
-  ColorType, MainPropType, OfferType, ProdCardType,
+  ColorType,
+  MainPropType,
+  OfferType,
+  ProdCardType,
 } from '@/types/types';
 import { parseColor } from '@/helpers/parsers/commonParsers';
+
+export { parseCategory } from '@/helpers/parsers/commonParsers';
 
 const parsePagination = (pagination: unknown) => {
   let pages = 0;
