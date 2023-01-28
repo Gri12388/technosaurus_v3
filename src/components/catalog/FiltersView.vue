@@ -3,7 +3,12 @@
     <h2 class="filter__title">Фильтры</h2>
 
     <form class="filter__form form">
-      <PriceRange v-model:price-max="priceMax" v-model:price-min="priceMin"/>
+      <PriceRange
+        :price-max="priceMax"
+        :price-min="priceMin"
+        @update-price-max="updatePriceMax"
+        @update-price-min="updatePriceMin"
+      />
 
       <CategorySelect v-model:cur-categ-id="curCategId"/>
 
@@ -25,13 +30,13 @@
         v-for="property in properties"
         :key="property.id"
         :property="property"
-        @cur-properties="updateCurProperties"
+        @update-cur-properties="updateCurProperties"
       />
 
       <button class="filter__submit button button--primery" type="submit">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button">
+      <button class="filter__reset button button--second" type="button" @click="resetFields">
         Сбросить
       </button>
     </form>
@@ -63,17 +68,18 @@ const store = useStore();
 
 const cmpColors = computed<ColorType[]>(() => store.getters.getColors);
 
-const priceMin: Ref<number | null> = ref(null);
-const priceMax: Ref<number | null> = ref(null);
+const priceMin: Ref<string | null> = ref(null);
+const priceMax: Ref<string | null> = ref(null);
 const curCategId: Ref<number | null> = ref(null);
 const curColorsIds: Ref<number[]> = ref([]);
-const curProperties: Ref<{ [index: string]: string[] }> = ref({ test: ['text'] });
+const curProperties: Ref<{ [index: string]: string[] }> = ref({});
 const properties: Ref<PropertyType[]> = ref([]);
 
-const cmpIsColorsShown = (() => !!properties.value
+const cmpIsColorsShown = (() => !!curCategId.value
+    && !!properties.value
     && !properties.value.find((item) => item.id === COLOR_PROP_ID)
 );
-console.log('curProperties:', curProperties.value);
+
 const loadProperties = async () => {
   if (curCategId.value) {
     try {
@@ -88,13 +94,25 @@ const loadProperties = async () => {
 };
 
 const updateCurProperties = (e: { [index: string]: string[] }) => {
-  console.log('e:', e);
-
   curProperties.value = { ...curProperties.value, ...e };
-  console.log('curProperties:', curProperties.value);
-  console.log('curPropertiesArr:', Object.entries(curProperties.value));
+};
+
+const updatePriceMin = (e: string | null) => {
+  priceMin.value = e;
+};
+
+const updatePriceMax = (e: string | null) => {
+  priceMax.value = e;
+};
+
+const resetFields = () => {
+  priceMin.value = null;
+  priceMax.value = null;
+  curCategId.value = null;
+  curColorsIds.value = [];
+  curProperties.value = {};
+  properties.value = [];
 };
 
 watch(curCategId, loadProperties);
-
 </script>

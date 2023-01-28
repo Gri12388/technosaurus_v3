@@ -1,6 +1,6 @@
 <template>
   <fieldset class="form__block">
-    <legend class="form__legend">{{  }}</legend>
+    <legend class="form__legend">{{ property.title }}</legend>
     <ul class="check-list">
       <PropertyCheckboxItem
         v-for="value in property.values"
@@ -32,7 +32,7 @@ type Props = {
 };
 
 type Emits = {
-  (e: 'curProperties', value: { [index: string]: string[] }): void,
+  (e: 'updateCurProperties', value: { [index: string]: string[] }): void,
 };
 
 const curProperties: Ref<string[]> = ref([]);
@@ -41,6 +41,6 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 watch(curProperties, () => {
-  emit('curProperties', { [props.property.code]: curProperties.value });
+  emit('updateCurProperties', { [props.property.code]: curProperties.value });
 });
 </script>

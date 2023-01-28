@@ -6,7 +6,7 @@
         class="form__input"
         type="text"
         name="min-price"
-        v-model="cmpPriceMin"
+        v-model="priceMin"
       />
       <span class="form__value">От</span>
     </label>
@@ -15,7 +15,7 @@
         class="form__input"
         type="text"
         name="max-price"
-        v-model="cmpPriceMax"
+        v-model="priceMax"
       />
       <span class="form__value">До</span>
     </label>
@@ -23,29 +23,48 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineEmits, defineProps } from 'vue';
+import {
+  defineEmits,
+  defineProps,
+  ref,
+  watch,
+} from 'vue';
 
 type Props = {
-  priceMin: number | null;
-  priceMax: number | null;
+  priceMin: string | null;
+  priceMax: string | null;
 }
 
 type Emits = {
-  (e: 'update:priceMin', value: number | null): void;
-  (e: 'update:priceMax', value: number | null): void;
+  (e: 'updatePriceMin', value: string | null): void;
+  (e: 'updatePriceMax', value: string | null): void;
 };
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const cmpPriceMin = computed({
-  get: () => props.priceMin,
-  set: (value: number | null) => emit('update:priceMin', value),
+const priceMin = ref(props.priceMin);
+const priceMax = ref(props.priceMax);
+
+watch(props, (value) => {
+  if (value.priceMin === null) priceMin.value = null;
+  if (value.priceMax === null) priceMax.value = null;
 });
 
-const cmpPriceMax = computed({
-  get: () => props.priceMax,
-  set: (value: number | null) => emit('update:priceMax', value),
+watch(priceMin, (value) => {
+  const reg = /^\d+$/;
+  if (value !== null && reg.test(value)) {
+    priceMin.value = value;
+    emit('updatePriceMin', value);
+  } else priceMin.value = null;
+});
+
+watch(priceMax, (value) => {
+  const reg = /^\d+$/;
+  if (value !== null && reg.test(value)) {
+    priceMax.value = value;
+    emit('updatePriceMax', value);
+  } else priceMax.value = null;
 });
 
 </script>
