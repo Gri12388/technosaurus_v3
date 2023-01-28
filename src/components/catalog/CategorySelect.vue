@@ -2,7 +2,7 @@
   <fieldset class="form__block">
     <legend class="form__legend">Категория</legend>
     <label class="form__label form__label--select">
-      <select class="form__select" name="category" v-model="cmpCurCateg">
+      <select class="form__select" name="category" v-model="cmpCurCategId">
         <option
           v-for="category in cmpCategories"
           :key="category.id"
@@ -19,11 +19,11 @@ import { useStore } from '@/store/store';
 import type { CategoryType } from '@/types/types';
 
 type Props = {
-  curCateg: number | null;
+  curCategId: number | null;
 };
 
 type Emits = {
-  (e: 'update:curCateg', value: number | null): void,
+  (e: 'update:curCategId', value: number | null): void,
 };
 
 const store = useStore();
@@ -31,8 +31,8 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const cmpCategories = computed<CategoryType[]>(() => store.getters.getCategories);
-const cmpCurCateg = computed({
-  get: () => props.curCateg,
-  set: (value: number | null) => emit('update:curCateg', value),
+const cmpCurCategId = computed({
+  get: () => props.curCategId,
+  set: (value: number | null) => emit('update:curCategId', value),
 });
 </script>

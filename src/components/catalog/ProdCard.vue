@@ -11,7 +11,7 @@
     <span class="catalog__price"> {{ cmpPrice }} ₽ </span>
 
     <ul class="colors colors--black">
-      <ColorView
+      <ColorRadioItem
         v-for="color in card.colors"
         :key="`${card.id}_${color.id}`"
         :input-id="`${card.id}_${color.id}`"
@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { computed, defineProps, ref } from 'vue';
 
-import ColorView from '@/components/catalog/ColorView.vue';
+import ColorRadioItem from '@/components/catalog/ColorRadioItem.vue';
 import MainPropView from '@/components/catalog/MainPropView.vue';
 
 import { formatNumber } from '@/helpers/formatters';
