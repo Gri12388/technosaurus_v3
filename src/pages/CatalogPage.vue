@@ -6,7 +6,7 @@
     </div>
 
     <div class="content__catalog">
-      <FilterView />
+      <FilterView @filter-products="filterProducts" />
       <GalleryView :cards="cards" :pages="pages" v-model:page="page" />
     </div>
   </main>
@@ -29,18 +29,19 @@ import { parseProducts } from '@/helpers/parsers/catalogParsers';
 import { origin, productPath } from '@/constants/paths';
 import { formatCards, formatProduct } from '@/helpers/formatters';
 
-import type { ProdCardType } from '@/types/types';
+import type { ProdCardType, QueryType } from '@/types/types';
 
 const page = ref(1);
 const limit = ref(3);
 const pages = ref(0);
 const total = ref(0);
 const cards: Ref<ProdCardType[]> = ref([]);
+const query: Ref<QueryType> = ref({});
 const productWord = computed(() => formatProduct(total.value));
 
 const loadProducts = async () => {
   const path = `${origin}${productPath}`;
-  const config = { params: { page: page.value, limit: limit.value } };
+  const config = { params: { ...query.value, page: page.value, limit: limit.value } };
 
   try {
     const res = await axios.get(path, config);
@@ -53,6 +54,11 @@ const loadProducts = async () => {
   }
 };
 
+const filterProducts = (value: QueryType) => {
+  query.value = value;
+};
+
+watch(query, () => loadProducts());
 watch(page, () => loadProducts());
 onMounted(() => loadProducts());
 </script>

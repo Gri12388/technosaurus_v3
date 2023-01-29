@@ -1,3 +1,11 @@
+export type ObjType = { [index: string]: string };
+
+export type QueryType = {
+  categoryId?: number;
+  minPrice?: number;
+  maxPrice?: number;
+};
+
 export type MainPropType = {
   id: number;
   code: string;

@@ -33,7 +33,11 @@
         @update-cur-properties="updateCurProperties"
       />
 
-      <button class="filter__submit button button--primery" type="submit">
+      <button
+        class="filter__submit button button--primery"
+        type="submit"
+        @click.prevent="filterProducts"
+      >
         Применить
       </button>
       <button class="filter__reset button button--second" type="button" @click="resetFields">
@@ -47,6 +51,7 @@
 import axios from 'axios';
 import {
   computed,
+  defineEmits,
   ref,
   Ref,
   watch,
@@ -64,7 +69,14 @@ import { useStore } from '@/store/store';
 import { ColorType, PropertyType } from '@/types/types';
 import { COLOR_PROP_ID } from '@/constants/constants';
 
+import type { QueryType } from '@/types/types';
+
+type Emits = {
+  (e: 'filterProducts', value: QueryType): void,
+};
+
 const store = useStore();
+const emit = defineEmits<Emits>();
 
 const cmpColors = computed<ColorType[]>(() => store.getters.getColors);
 
@@ -105,6 +117,17 @@ const updatePriceMax = (e: string | null) => {
   priceMax.value = e;
 };
 
+const getQuery = () => ({
+  categoryId: curCategId.value ? curCategId.value : undefined,
+  minPrice: priceMin.value ? Number.parseFloat(priceMin.value) : undefined,
+  maxPrice: priceMax.value ? Number.parseFloat(priceMax.value) : undefined,
+});
+
+const filterProducts = () => {
+  const query = getQuery();
+  emit('filterProducts', query);
+};
+
 const resetFields = () => {
   priceMin.value = null;
   priceMax.value = null;
@@ -112,6 +135,7 @@ const resetFields = () => {
   curColorsIds.value = [];
   curProperties.value = {};
   properties.value = [];
+  filterProducts();
 };
 
 watch(curCategId, loadProperties);
