@@ -175,4 +175,36 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios';
+import {
+  onMounted,
+  ref,
+  Ref,
+} from 'vue';
+import { useRoute } from 'vue-router';
+
+import { origin, productPath } from '@/constants/paths';
+import { parseProductRes } from '@/helpers/parsers/productParsers';
+
+import { ProductType } from '@/types/types';
+
+const route = useRoute();
+
+const product: Ref<ProductType | null> = ref(null);
+
+const loadProduct = async () => {
+  const productId = route.params.id;
+  const path = `${origin}${productPath}/${productId}`;
+
+  try {
+    const res = await axios.get(path);
+    product.value = parseProductRes(res.data);
+  } catch (err) {
+    console.error('err:', err);
+  }
+};
+
+onMounted(() => {
+  loadProduct();
+});
 </script>

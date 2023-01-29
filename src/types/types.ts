@@ -45,10 +45,21 @@ export type CategoryType = {
   properties?: PropertyType[];
 };
 
+export type SpecificationType = {
+  id: number;
+  title: string;
+  value: string;
+}
+
 export type ProdCardType = {
   id: number;
   image: string;
   mainProp: MainPropType;
   colors: ColorType[];
   offers: OfferType[];
+};
+
+export type ProductType = ProdCardType & {
+  specifications: SpecificationType[];
+  content: string;
 };
