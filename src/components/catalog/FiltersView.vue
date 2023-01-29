@@ -121,6 +121,7 @@ const getQuery = () => ({
   categoryId: curCategId.value ? curCategId.value : undefined,
   minPrice: priceMin.value ? Number.parseFloat(priceMin.value) : undefined,
   maxPrice: priceMax.value ? Number.parseFloat(priceMax.value) : undefined,
+  props: Object.keys(curProperties.value).length > 0 ? curProperties.value : undefined,
 });
 
 const filterProducts = () => {

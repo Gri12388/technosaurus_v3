@@ -1,7 +1,6 @@
 import { COLOR_PROP_ID } from '@/constants/constants';
 import {
   ColorType,
-  ObjType,
   OfferType,
   ProdCardType,
 } from '@/types/types';
@@ -39,36 +38,3 @@ export const formatCards = (cards: ProdCardType[]) => cards.reduce((acc: ProdCar
     return [...acc, copy];
   } else return [...acc, c];
 }, []);
-
-// export const formatPropsQuery = (array: { key: string, value: string }[]) => {
-//   const obj: { [index: string]: string } = {};
-//   array.forEach((item) => {
-//     const key = `props[${item.key}][]`;
-//     obj[key] = item.value;
-//   });
-//   return obj;
-// };
-
-// export const formatPropsQuery = (data: { [index: string]: string[] }) => {
-//   const temp = Object.entries(data);
-//   const obj: { [index: string]: string } = {};
-//   temp.forEach((item) => {
-//     const [key, value] = item;
-//     const props: { [index: string]: string } = {};
-//     const k = `props[${key}][]`;
-//     value.forEach((v) => props[k] = v);
-//   })
-
-// }
-
-// export const formatPropsQuery = (data: { [index: string]: string[] }) => {
-
-//   const temp = Object.entries(data);
-//   const obj: ObjType = {};
-//   temp.forEach((item) => {
-//     const [key, value] = item;
-//     const k = `props[${key}][]`;
-
-//     const props = value.reduce((acc: ObjType, v) => ({...acc, k: v}), {});
-//   })
-// }
