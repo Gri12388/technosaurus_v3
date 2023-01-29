@@ -1,23 +1,7 @@
 <template>
   <main class="content container">
     <div class="content__top">
-      <ul class="breadcrumbs">
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
-            Каталог
-          </a>
-        </li>
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
-            Мобильный транспорт
-          </a>
-        </li>
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
-            Смартфон Xiaomi Mi Mix 3 6/128GB
-          </a>
-        </li>
-      </ul>
+      <BreadCrumbs :breadcrumbs="cmpBreadCrumbsArr"/>
     </div>
 
     <section class="item">
@@ -177,20 +161,32 @@
 <script setup lang="ts">
 import axios from 'axios';
 import {
+  computed,
   onMounted,
   ref,
   Ref,
 } from 'vue';
 import { useRoute } from 'vue-router';
 
+import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
+
 import { origin, productPath } from '@/constants/paths';
 import { parseProductRes } from '@/helpers/parsers/productParsers';
 
-import { ProductType } from '@/types/types';
+import { BreadCrumbType, ProductType } from '@/types/types';
 
 const route = useRoute();
 
 const product: Ref<ProductType | null> = ref(null);
+
+const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
+  if (product.value) {
+    return [
+      { id: 0, title: 'Каталог', link: 'catalog' },
+      { id: 1, title: product.value.category.title, link: 'catalog' },
+    ];
+  } else return [];
+});
 
 const loadProduct = async () => {
   const productId = route.params.id;

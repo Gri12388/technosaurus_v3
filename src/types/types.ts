@@ -60,6 +60,13 @@ export type ProdCardType = {
 };
 
 export type ProductType = ProdCardType & {
-  specifications: SpecificationType[];
+  category: CategoryType;
   content: string;
+  specifications: SpecificationType[];
 };
+
+export type BreadCrumbType = {
+  id: number;
+  title: string;
+  link?: string;
+}

@@ -1,5 +1,6 @@
 import { ProductType, SpecificationType } from '@/types/types';
 import {
+  parseCategory,
   parseColors,
   parseId,
   parseImage,
@@ -58,6 +59,7 @@ export const parseProductRes = (product: unknown) => {
     colors: [],
     offers: [],
     specifications: [],
+    category: { id: -1, title: '' },
     mainProp: { id: -1, code: '', title: '' },
   };
 
@@ -73,6 +75,8 @@ export const parseProductRes = (product: unknown) => {
     if ('offers' in product) temp.offers = parseOffers(product.offers);
 
     if ('specifications' in product) temp.specifications = parseSpecifications(product.specifications);
+
+    if ('category' in product) temp.category = parseCategory(product.category);
 
     if ('content' in product) temp.content = parseContent(product.content);
   } else throw new Error('Variable "product" is not an object');
