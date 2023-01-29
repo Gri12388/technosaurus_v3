@@ -1,8 +1,11 @@
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
+    <router-link
+      class="catalog__pic"
+      :to="{ name: 'product', params: { id: card.id } }"
+    >
       <img :src="card.image" alt="curTitle" />
-    </a>
+    </router-link>
 
     <h3 class="catalog__title">
       <a href="#"> {{ curTitle }} </a>
