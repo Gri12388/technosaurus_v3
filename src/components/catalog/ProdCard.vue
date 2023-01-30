@@ -40,7 +40,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, ref } from 'vue';
+import {
+  computed,
+  defineProps,
+  ref,
+} from 'vue';
 
 import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
 import MainPropView from '@/components/catalog/MainPropView.vue';
@@ -81,7 +85,8 @@ const cmpCurColorId = computed({
         curPrice.value = found.offer.price;
       }
     }
-    return value;
+
+    curColorId.value = value;
   },
 });
 
@@ -95,13 +100,13 @@ const cmpCurOfferId = computed({
         curPrice.value = found.price;
       }
     }
-    return value;
+    curOfferId.value = value;
   },
 });
 
 const cmpPrice = computed(() => {
-  if (typeof curPrice.value === 'number') return formatNumber(curPrice.value);
-  else return curPrice.value;
+  if (curPrice.value) return formatNumber(curPrice.value);
+  else return null;
 });
 
 const saveProdState = () => {

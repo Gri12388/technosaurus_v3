@@ -44,29 +44,17 @@
               {{ cmpCurPrice }} ₽
             </b>
 
-            <fieldset class="form__block">
+            <fieldset class="form__block" v-if="product">
               <legend class="form__legend">Цвет:</legend>
               <ul class="colors">
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="blue">
-                    <span class="colors__value" style="background-color: #73B6EA;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="yellow">
-                    <span class="colors__value" style="background-color: #FFBE15;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="gray">
-                    <span class="colors__value" style="background-color: #939393;">
-                  </span></label>
-                </li>
+                <ColorRadioItem
+                  v-for="color in product.colors"
+                  :key="color.id"
+                  :inputId="color.id.toString()"
+                  :color="color"
+                  name="productColor"
+                  v-model:cur-color-id="curColorId"
+                />
               </ul>
             </fieldset>
 
@@ -158,6 +146,7 @@ import {
 import { useRoute } from 'vue-router';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
+import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
 import CounterView from '@/components/common/CounterView.vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
