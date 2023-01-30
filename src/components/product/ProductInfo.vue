@@ -25,6 +25,8 @@ const curTabId = ref(0);
 
 const cmpCurTabId = computed({
   get: () => curTabId.value,
-  set: (value: number) => curTabId.value = value,
-})
+  set: (value: number) => {
+    curTabId.value = value;
+  },
+});
 </script>

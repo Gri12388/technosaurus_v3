@@ -1,8 +1,8 @@
 <template>
   <li class="tabs__item" :class="cmpClass" @click="onTabClickHandler">
-    <a class="tabs__link ">
+    <p class="tabs__link pointer">
       {{ title }}
-    </a>
+    </p>
   </li>
 </template>
 
@@ -35,3 +35,9 @@ const onTabClickHandler = () => {
   emit('update:curTabId', props.id);
 };
 </script>
+
+<style scoped>
+.pointer {
+  cursor: pointer;
+}
+</style>
