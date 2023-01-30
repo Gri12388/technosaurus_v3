@@ -26,7 +26,7 @@
     </ul>
     <p class="main-prop">{{ mainProp }}</p>
     <ul class="mainPropList">
-      <MainPropView
+      <PropertyRadioItem
         v-for="offer in card.offers"
           :key="`${card.id}_${offer.id}`"
           :input-id="`${card.id}_${offer.id}`"
@@ -47,7 +47,7 @@ import {
 } from 'vue';
 
 import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
-import MainPropView from '@/components/catalog/MainPropView.vue';
+import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
 import { formatNumber } from '@/helpers/formatters';

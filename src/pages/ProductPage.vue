@@ -53,39 +53,23 @@
                   :inputId="color.id.toString()"
                   :color="color"
                   name="productColor"
-                  v-model:cur-color-id="curColorId"
+                  v-model:cur-color-id="cmpCurColorId"
                 />
               </ul>
             </fieldset>
 
-            <fieldset class="form__block">
-              <legend class="form__legend">Объемб в ГБ:</legend>
-
-              <ul class="sizes sizes--primery">
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="32">
-                    <span class="sizes__value">
-                      32gb
-                    </span>
-                  </label>
-                </li>
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="64">
-                    <span class="sizes__value">
-                      64gb
-                    </span>
-                  </label>
-                </li>
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="128">
-                    <span class="sizes__value">
-                      128gb
-                    </span>
-                  </label>
-                </li>
+            <fieldset class="form__block" v-if="product">
+              <legend class="form__legend">{{ product.mainProp.title }}</legend>
+              <ul class="mainPropList">
+                <PropertyRadioItem
+                  v-for="offer in product.offers"
+                  :key="offer.id"
+                  :input-id="offer.id.toString()"
+                  :main-prop-id="product.mainProp.id"
+                  :offer="offer"
+                  name="mainProp"
+                  v-model:cur-offer-id="cmpCurOfferId"
+                />
               </ul>
             </fieldset>
 
@@ -148,6 +132,7 @@ import { useRoute } from 'vue-router';
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
 import CounterView from '@/components/common/CounterView.vue';
+import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
 import { origin, productPath } from '@/constants/paths';
@@ -184,6 +169,34 @@ const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
 const cmpCurPrice = computed(() => {
   if (curPrice.value) return formatNumber(curPrice.value);
   else return null;
+});
+const cmpCurColorId = computed({
+  get: () => curColorId.value,
+  set: (value: number | null) => {
+    if (product.value && product.value.mainProp.id === COLOR_PROP_ID && value) {
+      const found = product.value.colors.find((item) => item.id === value);
+      if (found && found.offer) {
+        curTitle.value = found.offer.title;
+        curPrice.value = found.offer.price;
+      }
+    }
+
+    curColorId.value = value;
+  },
+});
+
+const cmpCurOfferId = computed({
+  get: () => curOfferId.value,
+  set: (value: number | null) => {
+    if (product.value && product.value.mainProp.id !== COLOR_PROP_ID && value) {
+      const found = product.value.offers.find((item) => item.id === value);
+      if (found) {
+        curTitle.value = found.title;
+        curPrice.value = found.price;
+      }
+    }
+    curOfferId.value = value;
+  },
 });
 const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
 
