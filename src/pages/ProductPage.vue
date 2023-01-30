@@ -6,8 +6,8 @@
 
     <section class="item">
       <div class="item__pics pics">
-        <div class="pics__wrapper">
-          <img width="570" height="570" src="img/phone-square.jpg" srcset="img/phone-square@2x.jpg 2x" alt="Название товара">
+        <div class="pics__wrapper" v-if="product">
+          <img class="image" :src="product.image" alt="Название товара">
         </div>
         <ul class="pics__list">
           <li class="pics__item">
@@ -34,7 +34,7 @@
       </div>
 
       <div class="item__info">
-        <span class="item__code">Артикул: 150030</span>
+        <span v-if="product" class="item__code">Артикул: {{ product.id }}</span>
         <h2 class="item__title">
           Смартфон Xiaomi Mi Mix 3 6/128GB
         </h2>
@@ -102,21 +102,9 @@
             </fieldset>
 
             <div class="item__row">
-              <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
-
-                <input type="text" value="1" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
+              <CounterView
+                @update-counter="updateCounter"
+              />
 
               <button class="button button--primery" type="submit">
                 В корзину
@@ -169,6 +157,7 @@ import {
 import { useRoute } from 'vue-router';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
+import CounterView from '@/components/common/CounterView.vue';
 
 import { origin, productPath } from '@/constants/paths';
 import { parseProductRes } from '@/helpers/parsers/productParsers';
@@ -178,6 +167,7 @@ import { BreadCrumbType, ProductType } from '@/types/types';
 const route = useRoute();
 
 const product: Ref<ProductType | null> = ref(null);
+const qty = ref(1);
 
 const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
   if (product.value) {
@@ -200,7 +190,19 @@ const loadProduct = async () => {
   }
 };
 
+const updateCounter = (e: number) => {
+  qty.value = e;
+};
+
 onMounted(() => {
   loadProduct();
 });
 </script>
+
+<style scoped>
+.image {
+display: block;
+height: 570px;
+margin: 0 auto;
+}
+</style>

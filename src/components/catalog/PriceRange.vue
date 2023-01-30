@@ -62,7 +62,7 @@ watch(priceMin, (value) => {
 watch(priceMax, (value) => {
   const reg = /^\d+$/;
   if (value !== null && reg.test(value)) {
-    priceMax.value = value;
+    // priceMax.value = value;
     emit('updatePriceMax', value);
   } else priceMax.value = null;
 });
