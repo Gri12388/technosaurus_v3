@@ -77,3 +77,8 @@ export type ProdStateType = {
   curPrice: number | null;
   curTitle: string | null;
 };
+
+export type TabType = {
+  id: number;
+  title: string;
+};

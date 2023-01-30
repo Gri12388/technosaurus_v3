@@ -21,5 +21,6 @@ module.exports = {
     'import/prefer-default-export': 0,
     'no-else-return': 0,
     'import/extensions': 0,
+    'vuejs-accessibility/click-events-have-key-events': 0,
   },
 };

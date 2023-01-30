@@ -9,28 +9,6 @@
         <div class="pics__wrapper" v-if="product">
           <img class="image" :src="product.image" alt="Название товара">
         </div>
-        <ul class="pics__list">
-          <li class="pics__item">
-            <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" src="img/phone-square-1.jpg" srcset="img/phone-square-1@2x.jpg 2x" alt="Название товара">
-            </a>
-          </li>
-          <li class="pics__item">
-            <a href="" class="pics__link">
-              <img width="98" height="98" src="img/phone-square-2.jpg" srcset="img/phone-square-2@2x.jpg 2x" alt="Название товара">
-            </a>
-          </li>
-          <li class="pics__item">
-            <a href="" class="pics__link">
-              <img width="98" height="98" src="img/phone-square-3.jpg" srcset="img/phone-square-3@2x.jpg 2x" alt="Название товара">
-            </a>
-          </li>
-          <li class="pics__item">
-            <a class="pics__link" href="#">
-              <img width="98" height="98" src="img/phone-square-4.jpg" srcset="img/phone-square-4@2x.jpg 2x" alt="Название товара">
-            </a>
-          </li>
-        </ul>
       </div>
 
       <div class="item__info">
@@ -86,34 +64,8 @@
         </div>
       </div>
 
-      <div class="item__desc">
-        <ul class="tabs">
-          <li class="tabs__item">
-            <a class="tabs__link tabs__link--current">
-              Описание
-            </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Характеристики
-            </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Гарантия
-            </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#">
-              Оплата и доставка
-            </a>
-          </li>
-        </ul>
+      <ProductInfo />
 
-        <div class="item__content">
-
-        </div>
-      </div>
     </section>
   </main>
 </template>
@@ -132,6 +84,7 @@ import { useRoute } from 'vue-router';
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
 import CounterView from '@/components/common/CounterView.vue';
+import ProductInfo from '@/components/product/ProductInfo.vue';
 import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
