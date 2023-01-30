@@ -2,7 +2,8 @@
   <li class="catalog__item">
     <router-link
       class="catalog__pic"
-      :to="{ name: 'product', params: { id: card.id } }"
+      :to="{ name: 'product', params: { productId: card.id } }"
+      @click="saveProdState"
     >
       <img :src="card.image" alt="curTitle" />
     </router-link>
@@ -41,9 +42,10 @@
 <script setup lang="ts">
 import { computed, defineProps, ref } from 'vue';
 
-import ColorRadioItem from '@/components/catalog/ColorRadioItem.vue';
+import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
 import MainPropView from '@/components/catalog/MainPropView.vue';
 
+import { COLOR_PROP_ID } from '@/constants/constants';
 import { formatNumber } from '@/helpers/formatters';
 import {
   initCurColorId,
@@ -52,14 +54,15 @@ import {
   initCurTitle,
   initMainProp,
 } from '@/helpers/helpers';
+import { useStore } from '@/store/store';
 
-import type { ProdCardType } from '@/types/types';
-import { COLOR_PROP_ID } from '@/constants/constants';
+import type { ProdCardType, ProdStateType } from '@/types/types';
 
 type Props = {
   card: ProdCardType;
 }
 
+const store = useStore();
 const props = defineProps<Props>();
 
 const curColorId = ref(initCurColorId(props.card));
@@ -100,6 +103,17 @@ const cmpPrice = computed(() => {
   if (typeof curPrice.value === 'number') return formatNumber(curPrice.value);
   else return curPrice.value;
 });
+
+const saveProdState = () => {
+  const prodState: ProdStateType = {
+    curColorId: curColorId.value,
+    curOfferId: curOfferId.value,
+    curPrice: curPrice.value,
+    curTitle: curTitle.value,
+  };
+
+  store.commit('setProdState', { prodState });
+};
 </script>
 
 <style scoped>

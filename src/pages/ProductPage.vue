@@ -35,13 +35,13 @@
 
       <div class="item__info">
         <span v-if="product" class="item__code">Артикул: {{ product.id }}</span>
-        <h2 class="item__title">
-          Смартфон Xiaomi Mi Mix 3 6/128GB
+        <h2 class="item__title" v-if="product">
+          {{ curTitle }}
         </h2>
         <div class="item__form">
           <form class="form" action="#" method="POST">
-            <b class="item__price">
-              18 990 ₽
+            <b class="item__price" v-if="product">
+              {{ cmpCurPrice }} ₽
             </b>
 
             <fieldset class="form__block">
@@ -153,21 +153,36 @@ import {
   onMounted,
   ref,
   Ref,
+  watch,
 } from 'vue';
 import { useRoute } from 'vue-router';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import CounterView from '@/components/common/CounterView.vue';
 
+import { COLOR_PROP_ID } from '@/constants/constants';
 import { origin, productPath } from '@/constants/paths';
+import { formatColors, formatNumber } from '@/helpers/formatters';
+import {
+  initCurColorId,
+  initCurOfferId,
+  initCurPrice,
+  initCurTitle,
+} from '@/helpers/helpers';
 import { parseProductRes } from '@/helpers/parsers/productParsers';
+import { useStore } from '@/store/store';
 
-import { BreadCrumbType, ProductType } from '@/types/types';
+import type { BreadCrumbType, ProdStateType, ProductType } from '@/types/types';
 
 const route = useRoute();
+const store = useStore();
 
 const product: Ref<ProductType | null> = ref(null);
 const qty = ref(1);
+const curOfferId: Ref<number | null> = ref(null);
+const curColorId: Ref<number | null> = ref(null);
+const curPrice: Ref<number | null> = ref(null);
+const curTitle: Ref<string | null> = ref(null);
 
 const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
   if (product.value) {
@@ -177,14 +192,23 @@ const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
     ];
   } else return [];
 });
+const cmpCurPrice = computed(() => {
+  if (curPrice.value) return formatNumber(curPrice.value);
+  else return null;
+});
+const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
 
 const loadProduct = async () => {
-  const productId = route.params.id;
+  const { productId } = route.params;
   const path = `${origin}${productPath}/${productId}`;
 
   try {
     const res = await axios.get(path);
-    product.value = parseProductRes(res.data);
+    const temp = parseProductRes(res.data);
+    if (temp.mainProp.id === COLOR_PROP_ID) {
+      temp.colors = formatColors(temp.colors, temp.offers);
+    }
+    product.value = temp;
   } catch (err) {
     console.error('err:', err);
   }
@@ -196,6 +220,22 @@ const updateCounter = (e: number) => {
 
 onMounted(() => {
   loadProduct();
+});
+
+watch(product, () => {
+  if (product.value) {
+    if (cmpProdState.value.curOfferId) curOfferId.value = cmpProdState.value.curOfferId;
+    else curOfferId.value = initCurOfferId(product.value);
+
+    if (cmpProdState.value.curColorId) curColorId.value = cmpProdState.value.curColorId;
+    else curColorId.value = initCurColorId(product.value);
+
+    if (cmpProdState.value.curPrice) curPrice.value = cmpProdState.value.curPrice;
+    else curPrice.value = initCurPrice(product.value);
+
+    if (cmpProdState.value.curTitle) curTitle.value = cmpProdState.value.curTitle;
+    else curTitle.value = initCurTitle(product.value);
+  }
 });
 </script>
 

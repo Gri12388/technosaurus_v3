@@ -9,7 +9,7 @@ const routes: Array<RouteRecordRaw> = [
     component: CatalogPage,
   },
   {
-    path: '/product/:id',
+    path: '/product/:productId',
     name: 'product',
     component: ProductPage,
   },

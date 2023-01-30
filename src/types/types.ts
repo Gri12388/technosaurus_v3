@@ -69,4 +69,11 @@ export type BreadCrumbType = {
   id: number;
   title: string;
   link?: string;
-}
+};
+
+export type ProdStateType = {
+  curOfferId: number | null;
+  curColorId: number | null;
+  curPrice: number | null;
+  curTitle: string | null;
+};

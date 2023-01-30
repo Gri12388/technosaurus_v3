@@ -1,6 +1,7 @@
+import { defaultProdState } from '@/constants/constants';
 import { categoriesPath, colorsPath, origin } from '@/constants/paths';
 import { parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
-import { CategoryType, ColorType } from '@/types/types';
+import { CategoryType, ColorType, ProdStateType } from '@/types/types';
 import axios from 'axios';
 import { InjectionKey } from 'vue';
 import { createStore, useStore as baseUseStore, Store } from 'vuex';
@@ -8,6 +9,7 @@ import { createStore, useStore as baseUseStore, Store } from 'vuex';
 export type State = {
   categories: CategoryType[];
   colors: ColorType[];
+  prodState: ProdStateType;
 };
 
 export const key: InjectionKey<Store<State>> = Symbol('key');
@@ -18,10 +20,12 @@ export const store = createStore<State>({
   state: {
     categories: [],
     colors: [],
+    prodState: defaultProdState,
   },
   getters: {
     getCategories: (state) => state.categories,
     getColors: (state) => state.colors,
+    getProdState: (state) => state.prodState,
   },
   mutations: {
     dropCategories: (state) => {
@@ -30,11 +34,17 @@ export const store = createStore<State>({
     dropColors: (state) => {
       state.colors = [];
     },
+    dropProdState: (state) => {
+      state.prodState = defaultProdState;
+    },
     setCategories: (state, payload: { categories: CategoryType[] }) => {
       state.categories = payload.categories;
     },
     setColors: (state, payload: { colors: ColorType[] }) => {
       state.colors = payload.colors;
+    },
+    setProdState: (state, payload: { prodState: ProdStateType }) => {
+      state.prodState = payload.prodState;
     },
   },
   actions: {
