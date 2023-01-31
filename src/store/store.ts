@@ -48,6 +48,7 @@ export const store = createStore<State>({
     getCategories: (state) => state.categories,
     getColors: (state) => state.colors,
     getProdState: (state) => state.prodState,
+    getTotalProds: (state) => state.localCart.length,
   },
   mutations: {
     dropAccessKey: (state) => {
