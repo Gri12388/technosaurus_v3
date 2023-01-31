@@ -1,4 +1,4 @@
-import { ProductType, SpecificationType } from '@/types/types';
+import { SpecificationType } from '@/types/types';
 import {
   parseCategory,
   parseColors,
@@ -7,6 +7,8 @@ import {
   parseMainProp,
   parseOffers,
 } from '@/helpers/parsers/commonParsers';
+import { cloneDeep } from 'lodash';
+import { defaultProduct, defaultSpec } from '@/constants/constants';
 
 export const parseContent = (content: unknown) => {
   if (typeof content === 'string') return content;
@@ -14,11 +16,7 @@ export const parseContent = (content: unknown) => {
 };
 
 export const parseSpecification = (spec: unknown) => {
-  const temp: SpecificationType = {
-    id: -1,
-    title: '',
-    value: '',
-  };
+  const temp = cloneDeep(defaultSpec);
 
   if (typeof spec === 'object' && spec !== null) {
     if ('id' in spec && typeof spec.id === 'number') {
@@ -51,17 +49,8 @@ export const parseSpecifications = (specs: unknown) => {
   } else throw new Error('Variable "specs" is not an array');
 };
 
-export const parseProductRes = (product: unknown) => {
-  const temp: ProductType = {
-    id: -1,
-    image: '',
-    content: '',
-    colors: [],
-    offers: [],
-    specifications: [],
-    category: { id: -1, title: '' },
-    mainProp: { id: -1, code: '', title: '' },
-  };
+export const parseProductObj = (product: unknown) => {
+  const temp = cloneDeep(defaultProduct);
 
   if (typeof product === 'object' && product !== null) {
     if ('id' in product) temp.id = parseId(product.id);

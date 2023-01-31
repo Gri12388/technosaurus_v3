@@ -100,7 +100,7 @@ import {
   initCurPrice,
   initCurTitle,
 } from '@/helpers/helpers';
-import { parseProductRes } from '@/helpers/parsers/productParsers';
+import { parseProductObj } from '@/helpers/parsers/productParsers';
 import { useStore } from '@/store/store';
 
 import type { BreadCrumbType, ProdStateType, ProductType } from '@/types/types';
@@ -164,7 +164,7 @@ const loadProduct = async () => {
 
   try {
     const res = await axios.get(path);
-    const temp = parseProductRes(res.data);
+    const temp = parseProductObj(res.data);
     if (temp.mainProp.id === COLOR_PROP_ID) {
       temp.colors = formatColors(temp.colors, temp.offers);
     }

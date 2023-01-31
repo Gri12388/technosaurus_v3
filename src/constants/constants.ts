@@ -1,10 +1,13 @@
+import { cloneDeep } from 'lodash';
 import {
   CategoryType,
   ColorType,
   MainPropType,
   OfferType,
+  ProductType,
   PropertyType,
   PropertyValueType,
+  SpecificationType,
   TabType,
 } from '@/types/types';
 
@@ -45,3 +48,16 @@ export const defaultProperty: PropertyType = {
 };
 
 export const defaultPropertyValue: PropertyValueType = { value: '', count: -1 };
+
+export const defaultSpec: SpecificationType = { id: -1, title: '', value: '' };
+
+export const defaultProduct: ProductType = {
+  id: -1,
+  image: '',
+  content: '',
+  colors: [],
+  offers: [],
+  specifications: [],
+  category: cloneDeep(defaultCategory),
+  mainProp: cloneDeep(defaultMainProp),
+};
