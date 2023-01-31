@@ -14,13 +14,20 @@ import {
 import { parseAccessKeyObj, parseCartObj } from '@/helpers/parsers/commonParsers';
 import { parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
 
-import type { CategoryType, ColorType, ProdStateType } from '@/types/types';
+import type {
+  CartItemType,
+  CategoryType,
+  ColorType,
+  ProdStateType,
+} from '@/types/types';
 
 export type State = {
   accessKey: string | null;
   categories: CategoryType[];
   colors: ColorType[];
+  localCart: CartItemType[];
   prodState: ProdStateType;
+  serverCart: CartItemType[];
 };
 
 export const key: InjectionKey<Store<State>> = Symbol('key');
@@ -32,7 +39,9 @@ export const store = createStore<State>({
     accessKey: null,
     categories: [],
     colors: [],
+    localCart: [],
     prodState: cloneDeep(defaultProdState),
+    serverCart: [],
   },
   getters: {
     getAccessKey: (state) => state.accessKey,
@@ -50,8 +59,14 @@ export const store = createStore<State>({
     dropColors: (state) => {
       state.colors = [];
     },
+    dropLocalCart: (state) => {
+      state.localCart = [];
+    },
     dropProdState: (state) => {
       state.prodState = cloneDeep(defaultProdState);
+    },
+    dropServerCart(state) {
+      state.serverCart = [];
     },
     setAccessKey: (state, payload: { accessKey: string }) => {
       state.accessKey = payload.accessKey;
@@ -62,8 +77,17 @@ export const store = createStore<State>({
     setColors: (state, payload: { colors: ColorType[] }) => {
       state.colors = payload.colors;
     },
+    setLocalCart(state, payload: { localCart: CartItemType[] }) {
+      state.localCart = payload.localCart;
+    },
     setProdState: (state, payload: { prodState: ProdStateType }) => {
       state.prodState = payload.prodState;
+    },
+    setServerCart(state, payload: { serverCart: CartItemType[] }) {
+      state.serverCart = payload.serverCart;
+    },
+    syncCarts(state) {
+      state.localCart = cloneDeep(state.serverCart);
     },
   },
   actions: {
@@ -83,7 +107,8 @@ export const store = createStore<State>({
       try {
         const res = await axios.get(path, config);
         const { accessKey, cartItems } = parseCartObj(res.data);
-        (console.log('cartItems:', cartItems));
+        commit('setServerCart', { serverCart: cartItems });
+        commit('syncCarts');
         if (!state.accessKey) {
           commit('setAccessKey', { accessKey });
           localStorage.setItem('accessKey', accessKey);
