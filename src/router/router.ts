@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import CatalogPage from '@/pages/CatalogPage.vue';
+import CartPage from '@/pages/CartPage.vue';
 import ProductPage from '@/pages/ProductPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
@@ -12,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/product/:productId',
     name: 'product',
     component: ProductPage,
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartPage,
   },
 ];
 

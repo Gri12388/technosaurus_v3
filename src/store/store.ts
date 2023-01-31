@@ -47,7 +47,9 @@ export const store = createStore<State>({
     getAccessKey: (state) => state.accessKey,
     getCategories: (state) => state.categories,
     getColors: (state) => state.colors,
+    getLocalCart: (state) => state.localCart,
     getProdState: (state) => state.prodState,
+    getTotalPrice: (state) => state.localCart.reduce((acc: number, item) => item.offer.price + acc, 0),
     getTotalProds: (state) => state.localCart.length,
   },
   mutations: {
