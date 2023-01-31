@@ -1,12 +1,13 @@
 import { defaultProdState } from '@/constants/constants';
-import { categoriesPath, colorsPath, origin } from '@/constants/paths';
-import { parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
+import { accessKeyPath, categoriesPath, colorsPath, origin } from '@/constants/paths';
+import { parseAccessKeyObj, parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
 import { CategoryType, ColorType, ProdStateType } from '@/types/types';
 import axios from 'axios';
 import { InjectionKey } from 'vue';
 import { createStore, useStore as baseUseStore, Store } from 'vuex';
 
 export type State = {
+  accessKey: string | null;
   categories: CategoryType[];
   colors: ColorType[];
   prodState: ProdStateType;
@@ -18,16 +19,21 @@ export const useStore = () => baseUseStore(key);
 
 export const store = createStore<State>({
   state: {
+    accessKey: null,
     categories: [],
     colors: [],
     prodState: defaultProdState,
   },
   getters: {
+    getAccessKey: (state) => state.accessKey,
     getCategories: (state) => state.categories,
     getColors: (state) => state.colors,
     getProdState: (state) => state.prodState,
   },
   mutations: {
+    dropAccessKey: (state) => {
+      state.accessKey = null;
+    },
     dropCategories: (state) => {
       state.categories = [];
     },
@@ -36,6 +42,9 @@ export const store = createStore<State>({
     },
     dropProdState: (state) => {
       state.prodState = defaultProdState;
+    },
+    setAccessKey: (state, payload: { accessKey: string }) => {
+      state.accessKey = payload.accessKey;
     },
     setCategories: (state, payload: { categories: CategoryType[] }) => {
       state.categories = payload.categories;
@@ -48,6 +57,16 @@ export const store = createStore<State>({
     },
   },
   actions: {
+    loadAccessKey: async ({ commit }) => {
+      const path = `${origin}${accessKeyPath}`;
+      try {
+        const res = await axios.get(path);
+        const accessKey = parseAccessKeyObj(res);
+        commit('setAccessKey', { accessKey });
+      } catch (err) {
+        console.error(err);
+      }
+    },
     loadCategories: async ({ commit }) => {
       const path = `${origin}${categoriesPath}`;
       try {

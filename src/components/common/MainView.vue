@@ -21,6 +21,8 @@ const store = useStore();
 onMounted(() => {
   store.dispatch('loadCategories');
   store.dispatch('loadColors');
+  const accessKey = localStorage.getItem('accessKey');
+  if (accessKey) store.commit('setAccessKey', { accessKey });
 });
 
 </script>

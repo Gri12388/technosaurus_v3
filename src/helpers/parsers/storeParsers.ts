@@ -52,3 +52,11 @@ export const parseColorsObj = (colorsObj: unknown) => {
 
   return temp;
 };
+
+export const parseAccessKeyObj = (accessKeyObj: unknown) => {
+  if (typeof accessKeyObj === 'object' && accessKeyObj !== null) {
+    if ('accessKey' in accessKeyObj && typeof accessKeyObj.accessKey === 'string') {
+      return accessKeyObj.accessKey;
+    } else throw new Error('Field "accessKeyObj.accessKeyObj" is absent or is not type of "string"');
+  } else throw new Error('Variable "accessKeyObj" is not an object');
+};
