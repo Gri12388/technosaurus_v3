@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash';
+import { defaultColor } from '@/constants/constants';
 import {
   CategoryType,
   ColorType,
@@ -8,11 +10,7 @@ import {
 } from '@/types/types';
 
 export const parseColor = (color: unknown) => {
-  const temp: ColorType = {
-    id: -1,
-    code: '',
-    title: '',
-  };
+  const temp = cloneDeep(defaultColor);
 
   if (typeof color === 'object' && color !== null) {
     if ('id' in color && typeof color.id === 'number') temp.id = color.id;

@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { defaultProdState } from '@/constants/constants';
 import {
   accessKeyPath,
@@ -33,7 +34,7 @@ export const store = createStore<State>({
     accessKey: null,
     categories: [],
     colors: [],
-    prodState: defaultProdState,
+    prodState: cloneDeep(defaultProdState),
   },
   getters: {
     getAccessKey: (state) => state.accessKey,
@@ -52,7 +53,7 @@ export const store = createStore<State>({
       state.colors = [];
     },
     dropProdState: (state) => {
-      state.prodState = defaultProdState;
+      state.prodState = cloneDeep(defaultProdState);
     },
     setAccessKey: (state, payload: { accessKey: string }) => {
       state.accessKey = payload.accessKey;

@@ -1,4 +1,4 @@
-import { TabType } from '@/types/types';
+import { ColorType, TabType } from '@/types/types';
 
 export const COLOR_PROP_ID = 7;
 
@@ -14,4 +14,10 @@ export const defaultProdState = {
   curColorId: null,
   curPrice: null,
   curTitle: null,
+};
+
+export const defaultColor: ColorType = {
+  id: -1,
+  code: '',
+  title: '',
 };
