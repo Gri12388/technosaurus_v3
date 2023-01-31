@@ -64,7 +64,11 @@
         </div>
       </div>
 
-      <ProductInfo />
+      <ProductInfo
+        v-if="product"
+        :content="product.content"
+        :specifications="product.specifications"
+      />
 
     </section>
   </main>

@@ -6,27 +6,39 @@
         :key="tab.id"
         :id="tab.id"
         :title="tab.title"
-        v-model:cur-tab-id="cmpCurTabId"
+        v-model:cur-tab-id="curTabId"
       />
     </ul>
-    <div class="item__content">
+    <div class="item__content" v-if="curTabId === TABS[0].id">
+      {{ cmpContent }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import {
+  computed,
+  defineProps,
+  ref,
+} from 'vue';
 
 import TabView from '@/components/product/TabView.vue';
 
-import { TABS } from '@/constants/constants';
+import { LOREM, TABS } from '@/constants/constants';
+
+import type { SpecificationType } from '@/types/types';
+
+type Props = {
+  content: string;
+  specifications: SpecificationType[];
+}
+
+const props = defineProps<Props>();
 
 const curTabId = ref(0);
 
-const cmpCurTabId = computed({
-  get: () => curTabId.value,
-  set: (value: number) => {
-    curTabId.value = value;
-  },
+const cmpContent = computed(() => {
+  if (props.content) return props.content;
+  else return LOREM;
 });
 </script>
