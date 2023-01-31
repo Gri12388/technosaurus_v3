@@ -12,6 +12,13 @@
     <div class="item__content" v-if="curTabId === TABS[0].id">
       {{ cmpContent }}
     </div>
+    <ul class="item__content list" v-if="curTabId === TABS[1].id">
+      <SpecItem
+        v-for="spec in specifications"
+        :key="spec.id"
+        :spec="spec"
+      />
+    </ul>
   </div>
 </template>
 
@@ -22,6 +29,7 @@ import {
   ref,
 } from 'vue';
 
+import SpecItem from '@/components/product/SpecItem.vue';
 import TabView from '@/components/product/TabView.vue';
 
 import { LOREM, TABS } from '@/constants/constants';
@@ -42,3 +50,9 @@ const cmpContent = computed(() => {
   else return LOREM;
 });
 </script>
+
+<style scoped>
+.list {
+  list-style-type: none;
+}
+</style>

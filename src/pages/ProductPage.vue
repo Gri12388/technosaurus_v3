@@ -12,7 +12,7 @@
       </div>
 
       <div class="item__info">
-        <span v-if="product" class="item__code">Артикул: {{ product.id }}</span>
+        <span v-if="product" class="item__code">Артикул: {{ curOfferId }}</span>
         <h2 class="item__title" v-if="product">
           {{ curTitle }}
         </h2>
@@ -116,10 +116,11 @@ const curPrice: Ref<number | null> = ref(null);
 const curTitle: Ref<string | null> = ref(null);
 
 const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
-  if (product.value) {
+  if (product.value && curTitle.value) {
     return [
       { id: 0, title: 'Каталог', link: 'catalog' },
       { id: 1, title: product.value.category.title, link: 'catalog' },
+      { id: 2, title: curTitle.value },
     ];
   } else return [];
 });
