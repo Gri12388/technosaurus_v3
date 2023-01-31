@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { ProdCardType } from '@/types/types';
 import {
   parseColors,
@@ -6,6 +7,7 @@ import {
   parseMainProp,
   parseOffers,
 } from '@/helpers/parsers/commonParsers';
+import { defaultProdCard } from '@/constants/constants';
 
 export { parseCategory } from '@/helpers/parsers/commonParsers';
 
@@ -27,13 +29,7 @@ const parsePagination = (pagination: unknown) => {
 };
 
 const parseItem = (item: unknown) => {
-  const temp: ProdCardType = {
-    id: -1,
-    image: '',
-    mainProp: { id: -1, code: '', title: '' },
-    colors: [],
-    offers: [],
-  };
+  const temp = cloneDeep(defaultProdCard);
 
   if (typeof item === 'object' && item !== null) {
     if ('id' in item) temp.id = parseId(item.id);

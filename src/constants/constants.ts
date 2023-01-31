@@ -4,6 +4,7 @@ import {
   ColorType,
   MainPropType,
   OfferType,
+  ProdCardType,
   ProductType,
   PropertyType,
   PropertyValueType,
@@ -50,6 +51,14 @@ export const defaultProperty: PropertyType = {
 export const defaultPropertyValue: PropertyValueType = { value: '', count: -1 };
 
 export const defaultSpec: SpecificationType = { id: -1, title: '', value: '' };
+
+export const defaultProdCard: ProdCardType = {
+  id: -1,
+  image: '',
+  mainProp: cloneDeep(defaultMainProp),
+  colors: [],
+  offers: [],
+};
 
 export const defaultProduct: ProductType = {
   id: -1,
