@@ -83,7 +83,7 @@ export type TabType = {
   title: string;
 };
 
-export type CartProdType = {
+export type CartItemType = {
   qty: number;
   image: string;
   color: ColorType;

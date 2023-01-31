@@ -1,4 +1,8 @@
+import axios from 'axios';
 import { cloneDeep } from 'lodash';
+import { InjectionKey } from 'vue';
+import { createStore, useStore as baseUseStore, Store } from 'vuex';
+
 import { defaultProdState } from '@/constants/constants';
 import {
   accessKeyPath,
@@ -7,16 +11,10 @@ import {
   colorsPath,
   origin,
 } from '@/constants/paths';
-import {
-  parseAccessKeyObj,
-  parseCartObj,
-  parseCategoriesObj,
-  parseColorsObj,
-} from '@/helpers/parsers/storeParsers';
-import { CategoryType, ColorType, ProdStateType } from '@/types/types';
-import axios from 'axios';
-import { InjectionKey } from 'vue';
-import { createStore, useStore as baseUseStore, Store } from 'vuex';
+import { parseAccessKeyObj, parseCartObj } from '@/helpers/parsers/commonParsers';
+import { parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
+
+import type { CategoryType, ColorType, ProdStateType } from '@/types/types';
 
 export type State = {
   accessKey: string | null;
@@ -84,8 +82,8 @@ export const store = createStore<State>({
       const config = { params: { userAccessKey: state.accessKey } };
       try {
         const res = await axios.get(path, config);
-        (console.log('res:', res.data));
-        const { accessKey } = parseCartObj(res.data);
+        const { accessKey, cartItems } = parseCartObj(res.data);
+        (console.log('cartItems:', cartItems));
         if (!state.accessKey) {
           commit('setAccessKey', { accessKey });
           localStorage.setItem('accessKey', accessKey);

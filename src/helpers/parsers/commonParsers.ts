@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash';
 import {
+  defaultCartItem,
   defaultCategory,
   defaultColor,
   defaultMainProp,
@@ -8,6 +9,7 @@ import {
   defaultPropertyValue,
 } from '@/constants/constants';
 import {
+  CartItemType,
   ColorType,
   OfferType,
   PropertyType,
@@ -211,4 +213,81 @@ export const parseOffers = (offers: unknown) => {
       }
     }, []);
   } else throw new Error('Variable "offers" is not an array');
+};
+
+export const parseAccessKeyObj = (accessKeyObj: unknown) => {
+  if (typeof accessKeyObj === 'object' && accessKeyObj !== null) {
+    if ('accessKey' in accessKeyObj && typeof accessKeyObj.accessKey === 'string') {
+      return accessKeyObj.accessKey;
+    } else throw new Error('Field "accessKeyObj.accessKeyObj" is absent or is not type of "string"');
+  } else throw new Error('Variable "accessKeyObj" is not an object');
+};
+
+const parseCartItem = (cartItem: unknown) => {
+  const temp = cloneDeep(defaultCartItem);
+
+  if (typeof cartItem === 'object' && cartItem !== null) {
+    if ('quantity' in cartItem && typeof cartItem.quantity === 'number') {
+      temp.qty = cartItem.quantity;
+    } else throw new Error('Field "cartItem.quantity" is absent or is not type of "number"');
+
+    if ('color' in cartItem) {
+      if (typeof cartItem.color === 'object' && cartItem.color !== null) {
+        if ('color' in cartItem.color) {
+          temp.color = parseColor(cartItem.color.color);
+        } else throw new Error('Field "cartItem.color.color" is absent');
+      } else throw new Error('Field "cartItem.color" is not an object');
+    } else throw new Error('Field "cartItem.color" is absent');
+
+    if ('productOffer' in cartItem) {
+      if (typeof cartItem.productOffer === 'object' && cartItem.productOffer !== null) {
+        if ('product' in cartItem.productOffer) {
+          if (typeof cartItem.productOffer.product === 'object' && cartItem.productOffer.product !== null) {
+            if ('preview' in cartItem.productOffer.product) {
+              temp.image = parseImage(cartItem.productOffer.product.preview);
+            } else throw new Error('Field "cartItem.productOffer.product.preview" is absent');
+
+            if ('mainProp' in cartItem.productOffer.product) {
+              temp.mainProp = parseMainProp(cartItem.productOffer.product.mainProp);
+            } else throw new Error('Field "cartItem.productOffer.product.mainProp" is absent');
+
+            temp.offer = parseOffer(cartItem.productOffer);
+          } else throw new Error('Field "cartItem.productOffer.product" is not an object');
+        } else throw new Error('Field "cartItem.productOffer.product" is absent');
+      } else throw new Error('Field "cartItem.productOffer" is not an object');
+    } else throw new Error('Field "cartItem.productOffer" is absent');
+  } else throw new Error('Variable "cartItem" is not an object');
+
+  return temp;
+};
+
+export const parseCartItems = (cartItems: unknown) => {
+  if (Array.isArray(cartItems)) {
+    return cartItems.reduce((acc: CartItemType[], item: unknown) => {
+      try {
+        const cartItem = parseCartItem(item);
+        return [...acc, cartItem];
+      } catch (err) {
+        console.error(err);
+        return acc;
+      }
+    }, []);
+  } else throw new Error('Variable "cartItem" is not an array');
+};
+
+export const parseCartObj = (cartObj: unknown) => {
+  let accessKey = '';
+  let cartItems: CartItemType[] = [];
+
+  if (typeof cartObj === 'object' && cartObj !== null) {
+    if ('user' in cartObj) {
+      accessKey = parseAccessKeyObj(cartObj.user);
+    } else throw new Error('Field "cartObj.user" is absent');
+
+    if ('items' in cartObj) {
+      cartItems = parseCartItems(cartObj.items);
+    } else throw new Error('Field "cartObj.items" is absent');
+  } else throw new Error('Variable "cartObj" is not an object');
+
+  return { accessKey, cartItems };
 };

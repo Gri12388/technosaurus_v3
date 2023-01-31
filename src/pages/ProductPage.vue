@@ -104,6 +104,7 @@ import { parseProductObj } from '@/helpers/parsers/productParsers';
 import { useStore } from '@/store/store';
 
 import type { BreadCrumbType, ProdStateType, ProductType } from '@/types/types';
+import { parseCartObj } from '@/helpers/parsers/commonParsers';
 
 const route = useRoute();
 const store = useStore();
@@ -182,6 +183,8 @@ const addProduct = async () => {
       const data = { productOfferId: cmpCurOfferId.value, colorId: cmpCurColorId.value, quantity: qty.value };
       const res = await axios.post(path, data, config);
       console.log('res', res.data);
+      const { cartItems } = parseCartObj(res.data);
+      console.log('cartItems:', cartItems);
     } else throw new Error('Either variabele "offerId" or variable "colorId" or variable "accessKey" is absent');
   } catch (err) {
     console.error(err);

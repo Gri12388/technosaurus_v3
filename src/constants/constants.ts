@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash';
 import {
+  CartItemType,
   CategoryType,
   ColorType,
   MainPropType,
@@ -69,4 +70,12 @@ export const defaultProduct: ProductType = {
   specifications: [],
   category: cloneDeep(defaultCategory),
   mainProp: cloneDeep(defaultMainProp),
+};
+
+export const defaultCartItem: CartItemType = {
+  qty: 0,
+  image: '',
+  mainProp: cloneDeep(defaultMainProp),
+  color: cloneDeep(defaultColor),
+  offer: cloneDeep(defaultOffer),
 };
