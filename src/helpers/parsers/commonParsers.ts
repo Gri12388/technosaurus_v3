@@ -1,9 +1,14 @@
 import { cloneDeep } from 'lodash';
-import { defaultColor } from '@/constants/constants';
 import {
-  CategoryType,
+  defaultCategory,
+  defaultColor,
+  defaultMainProp,
+  defaultOffer,
+  defaultProperty,
+  defaultPropertyValue,
+} from '@/constants/constants';
+import {
   ColorType,
-  MainPropType,
   OfferType,
   PropertyType,
   PropertyValueType,
@@ -27,10 +32,7 @@ export const parseColor = (color: unknown) => {
 };
 
 export const parsePropertyValue = (propertyValue: unknown) => {
-  const temp: PropertyValueType = {
-    value: '',
-    count: -1,
-  };
+  const temp = cloneDeep(defaultPropertyValue);
 
   if (typeof propertyValue === 'object' && propertyValue !== null) {
     if ('value' in propertyValue && typeof propertyValue.value === 'string') {
@@ -60,12 +62,7 @@ export const parsePropertyValues = (propertyValues: unknown) => {
 };
 
 export const parseProperty = (property: unknown) => {
-  const temp: PropertyType = {
-    id: -1,
-    title: '',
-    code: '',
-    values: [],
-  };
+  const temp = cloneDeep(defaultProperty);
 
   if (typeof property === 'object' && property !== null) {
     if ('id' in property && typeof property.id === 'number') {
@@ -103,10 +100,7 @@ export const parseProperties = (properties: unknown) => {
 };
 
 export const parseCategory = (category: unknown) => {
-  const temp: CategoryType = {
-    id: -1,
-    title: '',
-  };
+  const temp = cloneDeep(defaultCategory);
 
   if (typeof category === 'object' && category !== null) {
     if ('id' in category && typeof category.id === 'number') temp.id = category.id;
@@ -138,7 +132,7 @@ export const parseImage = (image: unknown) => {
 };
 
 export const parseMainProp = (mainProp: unknown) => {
-  const temp: MainPropType = { id: -1, code: '', title: '' };
+  const temp = cloneDeep(defaultMainProp);
 
   if (typeof mainProp === 'object' && mainProp !== null) {
     if ('id' in mainProp && typeof mainProp.id === 'number') temp.id = mainProp.id;
@@ -176,12 +170,7 @@ export const parseColors = (colors: unknown) => {
 };
 
 export const parseOffer = (offer: unknown) => {
-  const temp: OfferType = {
-    id: -1,
-    price: -1,
-    title: '',
-    value: '',
-  };
+  const temp = cloneDeep(defaultOffer);
 
   if (typeof offer === 'object' && offer !== null) {
     if ('id' in offer && typeof offer.id === 'number') {
