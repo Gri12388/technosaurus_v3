@@ -23,21 +23,14 @@
     <span class="product__code">
       Артикул: {{ cartItem.offer.id }}
     </span>
-    <div class="product__counter form__counter">
-      <button type="button" aria-label="Убрать один товар">
-        <svg width="10" height="10" fill="currentColor">
-          <use xlink:href="#icon-minus"></use>
-        </svg>
-      </button>
-      <input type="text" value="1" name="count">
-      <button type="button" aria-label="Добавить один товар">
-        <svg width="10" height="10" fill="currentColor">
-          <use xlink:href="#icon-plus"></use>
-        </svg>
-      </button>
-    </div>
+
+    <CounterView
+      :qty="qty"
+      @update-counter="updateCounter"
+    />
+
     <b class="product__price">
-      4 990 ₽
+      {{ cmpSum }} ₽
     </b>
     <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
       <svg width="20" height="20" fill="currentColor">
@@ -48,9 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import {
+  computed,
+  defineProps,
+  ref,
+} from 'vue';
+
+import CounterView from '@/components/common/CounterView.vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
+import { formatNumber } from '@/helpers/formatters';
 
 import { CartItemType } from '@/types/types';
 
@@ -60,7 +60,15 @@ type Props = {
 
 const props = defineProps<Props>();
 
+const qty = ref(props.cartItem.qty);
+
 const cmpIsColorMainProp = computed(() => props.cartItem.mainProp.id === COLOR_PROP_ID);
+const cmpSum = computed(() => formatNumber(qty.value * props.cartItem.offer.price));
+
+const updateCounter = (e: number) => {
+  qty.value = e;
+};
+
 </script>
 
 <style scoped>

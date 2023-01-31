@@ -1,5 +1,5 @@
 <template>
-  <div class="form__counter">
+  <div class="form__counter border">
     <button
       type="button"
       aria-label="Убрать один товар"
@@ -31,19 +31,24 @@
 
 <script setup lang="ts">
 import {
+  defineProps,
   defineEmits,
   ref,
-  Ref,
   watch,
 } from 'vue';
+
+type Props = {
+  qty: number;
+};
 
 type Emits = {
   (e: 'updateCounter', value: number): void;
 };
 
+const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const counter: Ref<string> = ref('1');
+const counter = ref(props.qty.toString());
 
 const increaseCounterByOne = () => {
   const num = +counter.value;
@@ -65,3 +70,9 @@ watch(counter, (value) => {
   }
 });
 </script>
+
+<style scoped>
+.border {
+  border: solid 1px #000;
+}
+</style>

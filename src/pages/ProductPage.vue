@@ -53,6 +53,7 @@
 
             <div class="item__row">
               <CounterView
+                :qty="qty"
                 @update-counter="updateCounter"
               />
 

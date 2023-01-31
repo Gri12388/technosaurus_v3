@@ -1,10 +1,15 @@
 <template>
-  <a class="header__cart" href="cart.html" aria-label="Корзина с товарами">
+  <router-link
+    :to="{ name: 'cart' }"
+    class="header__cart"
+    href="cart.html"
+    aria-label="Корзина с товарами"
+  >
     <svg width="30" height="21" fill="currentColor">
       <use xlink:href="#icon-cart"></use>
     </svg>
     <span class="header__count" aria-label="Количество товаров">{{ cmpTotalProds }}</span>
-  </a>
+  </router-link>
 </template>
 
 <script setup lang="ts">
