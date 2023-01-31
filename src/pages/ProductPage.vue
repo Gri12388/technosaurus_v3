@@ -182,9 +182,10 @@ const addProduct = async () => {
       const config = { params: { userAccessKey: cmpAccessKey.value } };
       const data = { productOfferId: cmpCurOfferId.value, colorId: cmpCurColorId.value, quantity: qty.value };
       const res = await axios.post(path, data, config);
-      console.log('res', res.data);
       const { cartItems } = parseCartObj(res.data);
-      console.log('cartItems:', cartItems);
+      store.commit('setServerCart', { serverCart: cartItems });
+      store.commit('syncCarts');
+      qty.value = 1;
     } else throw new Error('Either variabele "offerId" or variable "colorId" or variable "accessKey" is absent');
   } catch (err) {
     console.error(err);
