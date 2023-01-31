@@ -56,7 +56,7 @@
                 @update-counter="updateCounter"
               />
 
-              <button class="button button--primery" type="submit">
+              <button class="button button--primery" @click.prevent="addProduct">
                 В корзину
               </button>
             </div>
@@ -92,7 +92,7 @@ import ProductInfo from '@/components/product/ProductInfo.vue';
 import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
-import { origin, productPath } from '@/constants/paths';
+import { cartProdsPath, origin, productPath } from '@/constants/paths';
 import { formatColors, formatNumber } from '@/helpers/formatters';
 import {
   initCurColorId,
@@ -142,7 +142,6 @@ const cmpCurColorId = computed({
     curColorId.value = value;
   },
 });
-
 const cmpCurOfferId = computed({
   get: () => curOfferId.value,
   set: (value: number | null) => {
@@ -157,6 +156,7 @@ const cmpCurOfferId = computed({
   },
 });
 const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
+const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 
 const loadProduct = async () => {
   const { productId } = route.params;
@@ -171,6 +171,20 @@ const loadProduct = async () => {
     product.value = temp;
   } catch (err) {
     console.error('err:', err);
+  }
+};
+
+const addProduct = async () => {
+  try {
+    if (cmpCurOfferId.value && cmpCurColorId.value && cmpAccessKey.value) {
+      const path = `${origin}${cartProdsPath}`;
+      const config = { params: { userAccessKey: cmpAccessKey.value } };
+      const data = { productOfferId: cmpCurOfferId.value, colorId: cmpCurColorId.value, quantity: qty.value };
+      const res = await axios.post(path, data, config);
+      console.log('res', res.data);
+    } else throw new Error('Either variabele "offerId" or variable "colorId" or variable "accessKey" is absent');
+  } catch (err) {
+    console.error(err);
   }
 };
 

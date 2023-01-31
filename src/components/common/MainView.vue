@@ -23,6 +23,7 @@ onMounted(() => {
   store.dispatch('loadColors');
   const accessKey = localStorage.getItem('accessKey');
   if (accessKey) store.commit('setAccessKey', { accessKey });
+  store.dispatch('loadCart');
 });
 
 </script>

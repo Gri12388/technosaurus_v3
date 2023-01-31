@@ -1,4 +1,4 @@
-import { CategoryType, ColorType } from '@/types/types';
+import { CategoryType, CartProdType, ColorType } from '@/types/types';
 import { parseCategory, parseColor } from '@/helpers/parsers/commonParsers';
 
 export const parseCategories = (categories: unknown) => {
@@ -59,4 +59,16 @@ export const parseAccessKeyObj = (accessKeyObj: unknown) => {
       return accessKeyObj.accessKey;
     } else throw new Error('Field "accessKeyObj.accessKeyObj" is absent or is not type of "string"');
   } else throw new Error('Variable "accessKeyObj" is not an object');
+};
+
+export const parseCartObj = (cartObj: unknown) => {
+  let accessKey = '';
+
+  if (typeof cartObj === 'object' && cartObj !== null) {
+    if ('user' in cartObj) {
+      accessKey = parseAccessKeyObj(cartObj.user);
+    } else throw new Error('Field "cartObj.user" is absent');
+  } else throw new Error('Variable "cartObj" is not an object');
+
+  return { accessKey };
 };

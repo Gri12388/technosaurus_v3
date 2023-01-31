@@ -1,6 +1,17 @@
 import { defaultProdState } from '@/constants/constants';
-import { accessKeyPath, categoriesPath, colorsPath, origin } from '@/constants/paths';
-import { parseAccessKeyObj, parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
+import {
+  accessKeyPath,
+  cartPath,
+  categoriesPath,
+  colorsPath,
+  origin,
+} from '@/constants/paths';
+import {
+  parseAccessKeyObj,
+  parseCartObj,
+  parseCategoriesObj,
+  parseColorsObj,
+} from '@/helpers/parsers/storeParsers';
 import { CategoryType, ColorType, ProdStateType } from '@/types/types';
 import axios from 'axios';
 import { InjectionKey } from 'vue';
@@ -63,6 +74,21 @@ export const store = createStore<State>({
         const res = await axios.get(path);
         const accessKey = parseAccessKeyObj(res);
         commit('setAccessKey', { accessKey });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    loadCart: async ({ commit, state }) => {
+      const path = `${origin}${cartPath}`;
+      const config = { params: { userAccessKey: state.accessKey } };
+      try {
+        const res = await axios.get(path, config);
+        (console.log('res:', res.data));
+        const { accessKey } = parseCartObj(res.data);
+        if (!state.accessKey) {
+          commit('setAccessKey', { accessKey });
+          localStorage.setItem('accessKey', accessKey);
+        }
       } catch (err) {
         console.error(err);
       }

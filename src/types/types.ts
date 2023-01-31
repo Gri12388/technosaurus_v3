@@ -82,3 +82,11 @@ export type TabType = {
   id: number;
   title: string;
 };
+
+export type CartProdType = {
+  qty: number;
+  image: string;
+  color: ColorType;
+  offer: OfferType;
+  mainProp: MainPropType;
+};
