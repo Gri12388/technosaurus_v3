@@ -31,7 +31,11 @@
             Итого: <span>{{ cmpTotalPrice }} ₽</span>
           </p>
 
-          <button class="cart__button button button--primery" type="submit">
+          <button
+            class="cart__button button button--primery"
+            :disabled="cmpIsOrderButtonDisabled"
+            @click="gotoOrderPage"
+          >
             Оформить заказ
           </button>
         </div>
@@ -42,6 +46,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import CartItem from '@/components/cart/CartItem.vue';
@@ -52,9 +57,13 @@ import { formatNumber, formatProduct } from '@/helpers/formatters';
 import { CartItemType } from '@/types/types';
 
 const store = useStore();
+const router = useRouter();
 
 const cmpLocalCart = computed<CartItemType[]>(() => store.getters.getLocalCart);
 const cmpTotalPrice = computed<string>(() => formatNumber(store.getters.getTotalPrice));
 const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+const cmpIsOrderButtonDisabled = computed(() => cmpTotalProds.value === 0);
+
+const gotoOrderPage = () => router.push({ name: 'order' });
 </script>
