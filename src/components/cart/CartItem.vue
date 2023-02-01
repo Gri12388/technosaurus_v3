@@ -50,6 +50,7 @@ import {
   computed,
   defineProps,
   ref,
+  watch,
 } from 'vue';
 
 import CounterView from '@/components/common/CounterView.vue';
@@ -77,7 +78,8 @@ const cmpIsColorMainProp = computed(() => props.cartItem.mainProp.id === COLOR_P
 const cmpSum = computed(() => formatNumber(qty.value * props.cartItem.offer.price));
 
 const updateCounter = (e: number) => {
-  qty.value = e;
+  // qty.value = e;
+  store.commit('setLocalCartItemQty', { id: props.cartItem.id, qty: e });
 };
 
 const deleteCartItem = async () => {
@@ -88,7 +90,6 @@ const deleteCartItem = async () => {
         params: { userAccessKey: cmpAccessKey.value }, data: { basketItemId: props.cartItem.id },
       };
       const res = await axios.delete(path, config);
-      console.log('res:', res.data);
       const { cartItems } = parseCartObj(res.data);
       store.commit('setServerCart', { serverCart: cartItems });
       store.commit('syncCarts');
@@ -98,6 +99,26 @@ const deleteCartItem = async () => {
   }
 };
 
+const changeCartItem = async () => {
+  try {
+    if (cmpAccessKey.value) {
+      const path = `${origin}${cartProdsPath}`;
+      const data = { basketItemId: props.cartItem.id, quantity: qty.value };
+      const config = { params: { userAccessKey: cmpAccessKey.value } };
+      const res = await axios.put(path, data, config);
+      const { cartItems } = parseCartObj(res.data);
+      store.commit('setServerCart', { serverCart: cartItems });
+    } else throw new Error('Variable "accessKey" is absent');
+  } catch (err) {
+    console.error(err);
+    store.commit('syncCarts');
+  }
+};
+
+watch(qty, () => changeCartItem());
+watch(props, () => {
+  if (props.cartItem.qty !== qty.value) qty.value = props.cartItem.qty;
+});
 </script>
 
 <style scoped>

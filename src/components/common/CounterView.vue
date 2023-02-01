@@ -69,6 +69,11 @@ watch(counter, (value) => {
     emit('updateCounter', 1);
   }
 });
+
+watch(props, (value) => {
+  const qty = value.qty.toString();
+  if (qty !== counter.value) counter.value = qty;
+});
 </script>
 
 <style scoped>

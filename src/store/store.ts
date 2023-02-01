@@ -49,7 +49,7 @@ export const store = createStore<State>({
     getColors: (state) => state.colors,
     getLocalCart: (state) => state.localCart,
     getProdState: (state) => state.prodState,
-    getTotalPrice: (state) => state.localCart.reduce((acc: number, item) => item.offer.price + acc, 0),
+    getTotalPrice: (state) => state.localCart.reduce((acc: number, item) => item.offer.price * item.qty + acc, 0),
     getTotalProds: (state) => state.localCart.length,
   },
   mutations: {
@@ -82,6 +82,10 @@ export const store = createStore<State>({
     },
     setLocalCart(state, payload: { localCart: CartItemType[] }) {
       state.localCart = payload.localCart;
+    },
+    setLocalCartItemQty(state, payload: { id: number, qty: number }) {
+      const found = state.localCart.find((item) => item.id === payload.id);
+      if (found) found.qty = payload.qty;
     },
     setProdState: (state, payload: { prodState: ProdStateType }) => {
       state.prodState = payload.prodState;
