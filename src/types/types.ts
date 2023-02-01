@@ -101,3 +101,9 @@ export type OrderFieldsValuesType = {
   paymentTypeId: number;
   comment: string;
 };
+
+export type DeliveryType = {
+  id: number;
+  title: string;
+  price: string;
+};

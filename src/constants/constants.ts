@@ -4,6 +4,7 @@ import {
   CartItemType,
   CategoryType,
   ColorType,
+  DeliveryType,
   MainPropType,
   OfferType,
   OrderFieldsValuesType,
@@ -16,6 +17,8 @@ import {
 } from '@/types/types';
 
 export const COLOR_PROP_ID = 7;
+
+export const FREE = 'бесплатно';
 
 export const TABS: TabType[] = [
   { id: 0, title: 'Описание' },
@@ -38,6 +41,8 @@ export const LOREM = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. 
 export const defaultCategory: CategoryType = { id: -1, title: '' };
 
 export const defaultColor: ColorType = { id: -1, code: '', title: '' };
+
+export const defaultDelivery: DeliveryType = { id: -1, price: '', title: '' };
 
 export const defaultMainProp: MainPropType = { id: -1, code: '', title: '' };
 

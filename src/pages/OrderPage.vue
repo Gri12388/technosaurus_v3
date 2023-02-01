@@ -63,22 +63,13 @@
           <div class="cart__options">
             <h3 class="cart__title">Доставка</h3>
             <ul class="cart__options options">
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="delivery" value="0">
-                  <span class="options__value">
-                    Самовывоз <b>бесплатно</b>
-                  </span>
-                </label>
-              </li>
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="delivery" value="500">
-                  <span class="options__value">
-                    Курьером <b>500 ₽</b>
-                  </span>
-                </label>
-              </li>
+              <DeliveryRadioItem
+                v-for="delivery in deliveries"
+                :key="delivery.id"
+                :delivery="delivery"
+                name="delivery"
+                v-model:cur-delivery-id="orderFieldsValues.deliveryTypeId"
+              />
             </ul>
 
             <h3 class="cart__title">Оплата</h3>
@@ -122,28 +113,47 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios';
 import { cloneDeep } from 'lodash';
 import {
   computed,
+  onMounted,
   ref,
   Ref,
 } from 'vue';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
+import DeliveryRadioItem from '@/components/order/DeliveryRadioItem.vue';
 import RecapInfo from '@/components/common/RecapInfo.vue';
 import InputFormField from '@/components/order/InputFormField.vue';
 import TextAreaFormField from '@/components/order/TextAreaFormField.vue';
 
 import { defaultOrderFieldsValues, ORDER_BREADCRUMBS } from '@/constants/constants';
-import { useStore } from '@/store/store';
+import { deliveryPath, origin } from '@/constants/paths';
 import { formatProduct } from '@/helpers/formatters';
+import { parseDeliveries } from '@/helpers/parsers/orderParsers';
+import { useStore } from '@/store/store';
 
-import { OrderFieldsValuesType } from '@/types/types';
+import type { DeliveryType, OrderFieldsValuesType } from '@/types/types';
 
 const store = useStore();
 
 const orderFieldsValues: Ref<OrderFieldsValuesType> = ref(cloneDeep(defaultOrderFieldsValues));
+const deliveries: Ref<DeliveryType[]> = ref([]);
 
 const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+
+const loadDeliveryList = async () => {
+  try {
+    const path = `${origin}${deliveryPath}`;
+    const res = await axios.get(path);
+    deliveries.value = parseDeliveries(res.data);
+    if (deliveries.value.length > 0) orderFieldsValues.value.deliveryTypeId = deliveries.value[0].id;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+onMounted(() => loadDeliveryList());
 </script>
