@@ -6,6 +6,7 @@ import {
   ColorType,
   MainPropType,
   OfferType,
+  OrderFieldsValuesType,
   ProdCardType,
   ProductType,
   PropertyType,
@@ -45,6 +46,16 @@ export const defaultOffer: OfferType = {
   price: -1,
   title: '',
   value: '',
+};
+
+export const defaultOrderFieldsValues: OrderFieldsValuesType = {
+  name: '',
+  address: '',
+  phone: '',
+  email: '',
+  deliveryTypeId: -1,
+  paymentTypeId: -1,
+  comment: '',
 };
 
 export const defaultProdState = {

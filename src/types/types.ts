@@ -91,3 +91,13 @@ export type CartItemType = {
   offer: OfferType;
   mainProp: MainPropType;
 };
+
+export type OrderFieldsValuesType = {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  deliveryTypeId: number;
+  paymentTypeId: number;
+  comment: string;
+};
