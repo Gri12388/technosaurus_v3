@@ -79,6 +79,7 @@ export const defaultProduct: ProductType = {
 };
 
 export const defaultCartItem: CartItemType = {
+  id: 0,
   qty: 0,
   image: '',
   mainProp: cloneDeep(defaultMainProp),

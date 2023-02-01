@@ -227,6 +227,10 @@ const parseCartItem = (cartItem: unknown) => {
   const temp = cloneDeep(defaultCartItem);
 
   if (typeof cartItem === 'object' && cartItem !== null) {
+    if ('id' in cartItem && typeof cartItem.id === 'number') {
+      temp.id = cartItem.id;
+    } else throw new Error('Field "cartItem.id" is absent or is not type of "number"');
+
     if ('quantity' in cartItem && typeof cartItem.quantity === 'number') {
       temp.qty = cartItem.quantity;
     } else throw new Error('Field "cartItem.quantity" is absent or is not type of "number"');

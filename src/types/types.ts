@@ -84,6 +84,7 @@ export type TabType = {
 };
 
 export type CartItemType = {
+  id: number;
   qty: number;
   image: string;
   color: ColorType;
