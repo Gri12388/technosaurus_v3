@@ -74,22 +74,13 @@
 
             <h3 class="cart__title">Оплата</h3>
             <ul class="cart__options options">
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="pay" value="card">
-                  <span class="options__value">
-                    Картой при получении
-                  </span>
-                </label>
-              </li>
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="pay" value="cash">
-                  <span class="options__value">
-                    Наличными при получении
-                  </span>
-                </label>
-              </li>
+              <PaymentRadioItem
+                v-for="payment in payments"
+                :key="payment.id"
+                :payment="payment"
+                name="payment"
+                v-model:cur-payment-id="orderFieldsValues.paymentTypeId"
+              />
             </ul>
           </div>
         </div>
@@ -120,29 +111,47 @@ import {
   onMounted,
   ref,
   Ref,
+  watch,
 } from 'vue';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import DeliveryRadioItem from '@/components/order/DeliveryRadioItem.vue';
-import RecapInfo from '@/components/common/RecapInfo.vue';
 import InputFormField from '@/components/order/InputFormField.vue';
+import PaymentRadioItem from '@/components/order/PaymentRadioItem.vue';
+import RecapInfo from '@/components/common/RecapInfo.vue';
 import TextAreaFormField from '@/components/order/TextAreaFormField.vue';
 
 import { defaultOrderFieldsValues, ORDER_BREADCRUMBS } from '@/constants/constants';
-import { deliveryPath, origin } from '@/constants/paths';
+import { deliveryPath, origin, paymentPath } from '@/constants/paths';
 import { formatProduct } from '@/helpers/formatters';
-import { parseDeliveries } from '@/helpers/parsers/orderParsers';
+import { parseDeliveries, parsePayments } from '@/helpers/parsers/orderParsers';
 import { useStore } from '@/store/store';
 
-import type { DeliveryType, OrderFieldsValuesType } from '@/types/types';
+import type { DeliveryType, OrderFieldsValuesType, PaymentType } from '@/types/types';
 
 const store = useStore();
 
 const orderFieldsValues: Ref<OrderFieldsValuesType> = ref(cloneDeep(defaultOrderFieldsValues));
 const deliveries: Ref<DeliveryType[]> = ref([]);
+const payments: Ref<PaymentType[]> = ref([]);
 
+const compDeliveryTypeId = computed(() => orderFieldsValues.value.deliveryTypeId);
 const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+
+const loadPaymentList = async () => {
+  try {
+    if (deliveries.value.length > 0) {
+      const path = `${origin}${paymentPath}`;
+      const config = { params: { deliveryTypeId: orderFieldsValues.value.deliveryTypeId } };
+      const res = await axios.get(path, config);
+      payments.value = parsePayments(res.data);
+      if (payments.value.length > 0) orderFieldsValues.value.paymentTypeId = payments.value[0].id;
+    } else throw new Error('Array "deliveries" is empty');
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 const loadDeliveryList = async () => {
   try {
@@ -150,10 +159,12 @@ const loadDeliveryList = async () => {
     const res = await axios.get(path);
     deliveries.value = parseDeliveries(res.data);
     if (deliveries.value.length > 0) orderFieldsValues.value.deliveryTypeId = deliveries.value[0].id;
+    loadPaymentList();
   } catch (err) {
     console.error(err);
   }
 };
 
 onMounted(() => loadDeliveryList());
+watch(compDeliveryTypeId, () => loadPaymentList());
 </script>

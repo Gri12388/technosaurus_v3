@@ -107,3 +107,8 @@ export type DeliveryType = {
   title: string;
   price: string;
 };
+
+export type PaymentType = {
+  id: number;
+  title: string;
+};

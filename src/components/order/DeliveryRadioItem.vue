@@ -33,7 +33,7 @@ type Props = {
 };
 
 type Emits = {
-  (e: 'update:deliveryId', value: number): void,
+  (e: 'update:curDeliveryId', value: number): void,
 };
 
 const props = defineProps<Props>();
@@ -41,7 +41,7 @@ const emit = defineEmits<Emits>();
 
 const cmpDeliveryId = computed({
   get: () => props.curDeliveryId,
-  set: (value: number) => emit('update:deliveryId', value),
+  set: (value: number) => emit('update:curDeliveryId', value),
 });
 
 const cmpDeliveryPrice = computed(() => {

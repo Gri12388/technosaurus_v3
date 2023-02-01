@@ -8,6 +8,7 @@ import {
   MainPropType,
   OfferType,
   OrderFieldsValuesType,
+  PaymentType,
   ProdCardType,
   ProductType,
   PropertyType,
@@ -61,6 +62,11 @@ export const defaultOrderFieldsValues: OrderFieldsValuesType = {
   deliveryTypeId: -1,
   paymentTypeId: -1,
   comment: '',
+};
+
+export const defaultPayment: PaymentType = {
+  id: -1,
+  title: '',
 };
 
 export const defaultProdState = {

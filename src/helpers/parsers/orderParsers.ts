@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
-import { DeliveryType } from '@/types/types';
-import { defaultDelivery } from '@/constants/constants';
+import { DeliveryType, PaymentType } from '@/types/types';
+import { defaultDelivery, defaultPayment } from '@/constants/constants';
 
 export const parseDelivery = (delivery: unknown) => {
   const temp = cloneDeep(defaultDelivery);
@@ -17,7 +17,7 @@ export const parseDelivery = (delivery: unknown) => {
     if ('title' in delivery && typeof delivery.title === 'string') {
       temp.title = delivery.title;
     } else throw new Error('Field "delivery.title" is absent or is not type of "string"');
-  } else throw new Error('Variable "offer" is not an object');
+  } else throw new Error('Variable "delivery" is not an object');
 
   return temp;
 };
@@ -34,4 +34,34 @@ export const parseDeliveries = (deliveries: unknown) => {
       }
     }, []);
   } else throw new Error('Variable "deliveries" is not an array');
+};
+
+export const parsePayment = (payment: unknown) => {
+  const temp = cloneDeep(defaultPayment);
+
+  if (typeof payment === 'object' && payment !== null) {
+    if ('id' in payment && typeof payment.id === 'number') {
+      temp.id = payment.id;
+    } else throw new Error('Field "payment.id" is absent or is not type of "number"');
+
+    if ('title' in payment && typeof payment.title === 'string') {
+      temp.title = payment.title;
+    } else throw new Error('Field "payment.title" is absent or is not type of "string"');
+  } else throw new Error('Variable "payment" is not an object');
+
+  return temp;
+};
+
+export const parsePayments = (payments: unknown) => {
+  if (Array.isArray(payments)) {
+    return payments.reduce((acc: PaymentType[], item: unknown) => {
+      try {
+        const payment = parsePayment(item);
+        return [...acc, payment];
+      } catch (err) {
+        console.error(err);
+        return acc;
+      }
+    }, []);
+  } else throw new Error('Variable "payments" is not an array');
 };
