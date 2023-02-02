@@ -12,7 +12,7 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form class="cart__form form">
         <div class="cart__field">
           <div class="cart__data">
             <InputFormField
@@ -20,7 +20,7 @@
               name="name"
               placeholder="Введите ваше полное имя"
               title="ФИО"
-              error="error"
+              :error="orderFieldsErrors.name"
               v-model:value="orderFieldsValues.name"
             />
 
@@ -29,7 +29,7 @@
               name="address"
               placeholder="Введите ваш адрес"
               title="Адрес доставки"
-              error="error"
+              :error="orderFieldsErrors.address"
               v-model:value="orderFieldsValues.address"
             />
 
@@ -38,7 +38,7 @@
               name="phone"
               placeholder="Введите ваш телефон"
               title="Телефон"
-              error="error"
+              :error="orderFieldsErrors.phone"
               v-model:value="orderFieldsValues.phone"
             />
 
@@ -47,15 +47,15 @@
               name="email"
               placeholder="Введи ваш Email"
               title="Email"
-              error="error"
+              :error="orderFieldsErrors.email"
               v-model:value="orderFieldsValues.email"
             />
 
             <TextAreaFormField
-              name="comments"
+              name="comment"
               placeholder="Ваши пожелания"
               title="Комментарий к заказу"
-              error="error"
+              :error="orderFieldsErrors.comment"
               v-model:value="orderFieldsValues.comment"
             />
           </div>
@@ -88,11 +88,12 @@
         <RecapInfo>
           <button
             class="cart__button button button--primery"
+            @click.prevent="sentOrder"
           >
             Оформить заказ
           </button>
         </RecapInfo>
-        <div class="cart__error form__error-block">
+        <div class="cart__error form__error-block" v-if="cmpIsError">
           <h4>Заявка не отправлена!</h4>
           <p>
             Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
@@ -104,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { cloneDeep } from 'lodash';
 import {
   computed,
@@ -121,21 +122,34 @@ import PaymentRadioItem from '@/components/order/PaymentRadioItem.vue';
 import RecapInfo from '@/components/common/RecapInfo.vue';
 import TextAreaFormField from '@/components/order/TextAreaFormField.vue';
 
-import { defaultOrderFieldsValues, ORDER_BREADCRUMBS } from '@/constants/constants';
-import { deliveryPath, origin, paymentPath } from '@/constants/paths';
+import { defaultOrderFieldErrors, defaultOrderFieldsValues, ORDER_BREADCRUMBS } from '@/constants/constants';
+import {
+  deliveryPath,
+  orderPath,
+  origin,
+  paymentPath,
+} from '@/constants/paths';
 import { formatProduct } from '@/helpers/formatters';
-import { parseDeliveries, parsePayments } from '@/helpers/parsers/orderParsers';
+import { parseDeliveries, parseOrderError, parsePayments } from '@/helpers/parsers/orderParsers';
 import { useStore } from '@/store/store';
 
-import type { DeliveryType, OrderFieldsValuesType, PaymentType } from '@/types/types';
+import type {
+  DeliveryType,
+  OrderFieldsErrorsType,
+  OrderFieldsValuesType,
+  PaymentType,
+} from '@/types/types';
 
 const store = useStore();
 
 const orderFieldsValues: Ref<OrderFieldsValuesType> = ref(cloneDeep(defaultOrderFieldsValues));
+const orderFieldsErrors: Ref<OrderFieldsErrorsType> = ref(cloneDeep(defaultOrderFieldErrors));
 const deliveries: Ref<DeliveryType[]> = ref([]);
 const payments: Ref<PaymentType[]> = ref([]);
 
-const compDeliveryTypeId = computed(() => orderFieldsValues.value.deliveryTypeId);
+const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
+const cmpDeliveryTypeId = computed(() => orderFieldsValues.value.deliveryTypeId);
+const cmpIsError = computed(() => !!Object.values(orderFieldsErrors.value).find((item) => item !== ''));
 const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
 
@@ -165,6 +179,26 @@ const loadDeliveryList = async () => {
   }
 };
 
+const sentOrder = async () => {
+  try {
+    if (cmpAccessKey.value) {
+      orderFieldsErrors.value = cloneDeep(defaultOrderFieldErrors);
+      const path = `${origin}${orderPath}`;
+      const data = orderFieldsValues.value;
+      const config = { params: { userAccessKey: cmpAccessKey.value } };
+      const res = await axios.post(path, data, config);
+      console.log('res:', res.data);
+      store.commit('dropServerCart');
+      store.commit('syncCarts');
+    } else throw new Error('Variabele "accessKey" is absent');
+  } catch (err) {
+    if (err instanceof AxiosError && err.response) {
+      orderFieldsErrors.value = parseOrderError(err.response.data);
+    }
+    console.error(err);
+  }
+};
+
 onMounted(() => loadDeliveryList());
-watch(compDeliveryTypeId, () => loadPaymentList());
+watch(cmpDeliveryTypeId, () => loadPaymentList());
 </script>

@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
-import { DeliveryType, PaymentType } from '@/types/types';
-import { defaultDelivery, defaultPayment } from '@/constants/constants';
+import { DeliveryType, OrderFieldsErrorsType, PaymentType } from '@/types/types';
+import { defaultDelivery, defaultOrderFieldErrors, defaultPayment } from '@/constants/constants';
 
 export const parseDelivery = (delivery: unknown) => {
   const temp = cloneDeep(defaultDelivery);
@@ -64,4 +64,40 @@ export const parsePayments = (payments: unknown) => {
       }
     }, []);
   } else throw new Error('Variable "payments" is not an array');
+};
+
+export const parseOrderError = (orderError: unknown) => {
+  const temp: OrderFieldsErrorsType = cloneDeep(defaultOrderFieldErrors);
+
+  if (typeof orderError === 'object' && orderError !== null) {
+    if ('error' in orderError) {
+      if (typeof orderError.error === 'object' && orderError.error !== null) {
+        if ('request' in orderError.error) {
+          if (typeof orderError.error.request === 'object' && orderError.error.request !== null) {
+            if ('name' in orderError.error.request && typeof orderError.error.request.name === 'string') {
+              temp.name = orderError.error.request.name;
+            }
+
+            if ('address' in orderError.error.request && typeof orderError.error.request.address === 'string') {
+              temp.address = orderError.error.request.address;
+            }
+
+            if ('phone' in orderError.error.request && typeof orderError.error.request.phone === 'string') {
+              temp.phone = orderError.error.request.phone;
+            }
+
+            if ('email' in orderError.error.request && typeof orderError.error.request.email === 'string') {
+              temp.email = orderError.error.request.email;
+            }
+
+            if ('comment' in orderError.error.request && typeof orderError.error.request.comment === 'string') {
+              temp.comment = orderError.error.request.comment;
+            }
+          } else throw new Error('Field "orderError.error.request" is not an object');
+        } else throw new Error('Field "orderError.error.request" is absent');
+      } else throw new Error('Field "orderError.error" is not an object');
+    } else throw new Error('Field "orderError.error" is absent');
+  } else throw new Error('Variable "orderError" is not an object');
+
+  return temp;
 };

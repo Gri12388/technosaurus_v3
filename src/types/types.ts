@@ -102,6 +102,14 @@ export type OrderFieldsValuesType = {
   comment: string;
 };
 
+export type OrderFieldsErrorsType = {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  comment: string;
+};
+
 export type DeliveryType = {
   id: number;
   title: string;

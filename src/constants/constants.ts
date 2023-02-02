@@ -7,6 +7,7 @@ import {
   DeliveryType,
   MainPropType,
   OfferType,
+  OrderFieldsErrorsType,
   OrderFieldsValuesType,
   PaymentType,
   ProdCardType,
@@ -52,6 +53,14 @@ export const defaultOffer: OfferType = {
   price: -1,
   title: '',
   value: '',
+};
+
+export const defaultOrderFieldErrors: OrderFieldsErrorsType = {
+  name: '',
+  address: '',
+  phone: '',
+  email: '',
+  comment: '',
 };
 
 export const defaultOrderFieldsValues: OrderFieldsValuesType = {
