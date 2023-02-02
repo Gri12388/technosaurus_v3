@@ -9,6 +9,7 @@ import {
   OfferType,
   OrderFieldsErrorsType,
   OrderFieldsValuesType,
+  OrderInfoType,
   PaymentType,
   ProdCardType,
   ProductType,
@@ -122,4 +123,18 @@ export const defaultCartItem: CartItemType = {
   mainProp: cloneDeep(defaultMainProp),
   color: cloneDeep(defaultColor),
   offer: cloneDeep(defaultOffer),
+};
+
+export const defaultOrderInfo: OrderInfoType = {
+  orderId: -1,
+  name: '',
+  address: '',
+  phone: '',
+  email: '',
+  totalPrice: -1,
+  delivery: '',
+  deliveryPrice: '',
+  payment: '',
+  comment: '',
+  cartItems: [],
 };

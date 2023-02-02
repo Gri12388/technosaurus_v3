@@ -1,6 +1,17 @@
 import { cloneDeep } from 'lodash';
-import { DeliveryType, OrderFieldsErrorsType, PaymentType } from '@/types/types';
-import { defaultDelivery, defaultOrderFieldErrors, defaultPayment } from '@/constants/constants';
+import {
+  DeliveryType,
+  OrderFieldsErrorsType,
+  OrderInfoType,
+  PaymentType,
+} from '@/types/types';
+import {
+  defaultDelivery,
+  defaultOrderFieldErrors,
+  defaultOrderInfo,
+  defaultPayment,
+} from '@/constants/constants';
+import { parseCartObj } from './commonParsers';
 
 export const parseDelivery = (delivery: unknown) => {
   const temp = cloneDeep(defaultDelivery);
@@ -98,6 +109,64 @@ export const parseOrderError = (orderError: unknown) => {
       } else throw new Error('Field "orderError.error" is not an object');
     } else throw new Error('Field "orderError.error" is absent');
   } else throw new Error('Variable "orderError" is not an object');
+
+  return temp;
+};
+
+export const parseOrderObj = (orderObj: unknown) => {
+  const temp: OrderInfoType = cloneDeep(defaultOrderInfo);
+
+  if (typeof orderObj === 'object' && orderObj !== null) {
+    if ('id' in orderObj && typeof orderObj.id === 'number') {
+      temp.orderId = orderObj.id;
+    } else throw new Error('Field "orderObj.id" is absent or is not type of "number"');
+
+    if ('name' in orderObj && typeof orderObj.name === 'string') {
+      temp.name = orderObj.name;
+    } else throw new Error('Field "orderObj.name" is absent or is not type of "string"');
+
+    if ('address' in orderObj && typeof orderObj.address === 'string') {
+      temp.address = orderObj.address;
+    } else throw new Error('Field "orderObj.address" is absent or is not type of "string"');
+
+    if ('phone' in orderObj && typeof orderObj.phone === 'string') {
+      temp.phone = orderObj.phone;
+    } else throw new Error('Field "orderObj.phone" is absent or is not type of "string"');
+
+    if ('email' in orderObj && typeof orderObj.email === 'string') {
+      temp.email = orderObj.email;
+    } else throw new Error('Field "orderObj.email" is absent or is not type of "string"');
+
+    if ('totalPrice' in orderObj && typeof orderObj.totalPrice === 'number') {
+      temp.totalPrice = orderObj.totalPrice;
+    } else throw new Error('Field "orderObj.totalPrice" is absent or is not type of "number"');
+
+    if ('paymentType' in orderObj && typeof orderObj.paymentType === 'string') {
+      temp.payment = orderObj.paymentType;
+    } else throw new Error('Field "orderObj.paymentType" is absent or is not type of "string"');
+
+    if ('comment' in orderObj && typeof orderObj.comment === 'string') {
+      temp.comment = orderObj.comment;
+    }
+
+    if ('deliveryType' in orderObj) {
+      if (typeof orderObj.deliveryType === 'object' && orderObj.deliveryType !== null) {
+        if ('title' in orderObj.deliveryType && typeof orderObj.deliveryType.title === 'string') {
+          temp.delivery = orderObj.deliveryType.title;
+        } else throw new Error('Field "orderObj.deliveryType.title" is absent or is not type of "string"');
+
+        if ('price' in orderObj.deliveryType && typeof orderObj.deliveryType.price === 'string') {
+          temp.deliveryPrice = orderObj.deliveryType.price;
+        } else throw new Error('Field "orderObj.deliveryType.price" is absent or is not type of "string"');
+      } else throw new Error('Field "orderObj.deliveryType" is not an object');
+    } else throw new Error('Field "orderObj.deliveryType" is absent');
+
+    if ('basket' in orderObj) {
+      if (typeof orderObj.basket === 'object' && orderObj.basket !== null) {
+        temp.cartItems = parseCartObj(orderObj.basket).cartItems;
+      } else throw new Error('Field "orderObj.basket" is not an object');
+    } else throw new Error('Field "orderObj.basket" is absent');
+  } else throw new Error('Variable "orderObj" is not an object');
 
   return temp;
 };

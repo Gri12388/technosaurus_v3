@@ -92,6 +92,20 @@ export type CartItemType = {
   mainProp: MainPropType;
 };
 
+export type OrderInfoType = {
+  orderId: number;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  totalPrice: number;
+  delivery: string;
+  deliveryPrice: string;
+  payment: string;
+  comment: string;
+  cartItems: CartItemType[];
+};
+
 export type OrderFieldsValuesType = {
   name: string;
   address: string;

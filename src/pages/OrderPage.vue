@@ -130,7 +130,12 @@ import {
   paymentPath,
 } from '@/constants/paths';
 import { formatProduct } from '@/helpers/formatters';
-import { parseDeliveries, parseOrderError, parsePayments } from '@/helpers/parsers/orderParsers';
+import {
+  parseDeliveries,
+  parseOrderError,
+  parseOrderObj,
+  parsePayments,
+} from '@/helpers/parsers/orderParsers';
 import { useStore } from '@/store/store';
 
 import type {
@@ -188,6 +193,8 @@ const sentOrder = async () => {
       const config = { params: { userAccessKey: cmpAccessKey.value } };
       const res = await axios.post(path, data, config);
       console.log('res:', res.data);
+      const orderInfo = parseOrderObj(res.data);
+      console.log('orderInfo:', orderInfo);
       store.commit('dropServerCart');
       store.commit('syncCarts');
     } else throw new Error('Variabele "accessKey" is absent');
