@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash';
 import { InjectionKey } from 'vue';
 import { createStore, useStore as baseUseStore, Store } from 'vuex';
 
-import { defaultProdState } from '@/constants/constants';
+import { defaultOrderInfo, defaultProdState } from '@/constants/constants';
 import {
   accessKeyPath,
   cartPath,
@@ -18,6 +18,7 @@ import type {
   CartItemType,
   CategoryType,
   ColorType,
+  OrderInfoType,
   ProdStateType,
 } from '@/types/types';
 
@@ -26,6 +27,7 @@ export type State = {
   categories: CategoryType[];
   colors: ColorType[];
   localCart: CartItemType[];
+  orderInfo: OrderInfoType;
   prodState: ProdStateType;
   serverCart: CartItemType[];
 };
@@ -40,6 +42,7 @@ export const store = createStore<State>({
     categories: [],
     colors: [],
     localCart: [],
+    orderInfo: cloneDeep(defaultOrderInfo),
     prodState: cloneDeep(defaultProdState),
     serverCart: [],
   },
@@ -48,6 +51,7 @@ export const store = createStore<State>({
     getCategories: (state) => state.categories,
     getColors: (state) => state.colors,
     getLocalCart: (state) => state.localCart,
+    getOrderInfo: (state) => state.orderInfo,
     getProdState: (state) => state.prodState,
     getTotalPrice: (state) => state.localCart.reduce((acc: number, item) => item.offer.price * item.qty + acc, 0),
     getTotalProds: (state) => state.localCart.length,
@@ -64,6 +68,9 @@ export const store = createStore<State>({
     },
     dropLocalCart: (state) => {
       state.localCart = [];
+    },
+    dropOrderInfo: (state) => {
+      state.orderInfo = cloneDeep(defaultOrderInfo);
     },
     dropProdState: (state) => {
       state.prodState = cloneDeep(defaultProdState);
@@ -86,6 +93,9 @@ export const store = createStore<State>({
     setLocalCartItemQty(state, payload: { id: number, qty: number }) {
       const found = state.localCart.find((item) => item.id === payload.id);
       if (found) found.qty = payload.qty;
+    },
+    setOrderInfo: (state, payload: { orderInfo: OrderInfoType }) => {
+      state.orderInfo = payload.orderInfo;
     },
     setProdState: (state, payload: { prodState: ProdStateType }) => {
       state.prodState = payload.prodState;

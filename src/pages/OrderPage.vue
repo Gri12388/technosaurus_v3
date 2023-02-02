@@ -114,6 +114,7 @@ import {
   Ref,
   watch,
 } from 'vue';
+import { useRouter } from 'vue-router';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import DeliveryRadioItem from '@/components/order/DeliveryRadioItem.vue';
@@ -146,6 +147,7 @@ import type {
 } from '@/types/types';
 
 const store = useStore();
+const router = useRouter();
 
 const orderFieldsValues: Ref<OrderFieldsValuesType> = ref(cloneDeep(defaultOrderFieldsValues));
 const orderFieldsErrors: Ref<OrderFieldsErrorsType> = ref(cloneDeep(defaultOrderFieldErrors));
@@ -194,9 +196,10 @@ const sentOrder = async () => {
       const res = await axios.post(path, data, config);
       console.log('res:', res.data);
       const orderInfo = parseOrderObj(res.data);
-      console.log('orderInfo:', orderInfo);
+      store.commit('setOrderInfo', { orderInfo });
       store.commit('dropServerCart');
       store.commit('syncCarts');
+      router.push({ name: 'orderInfo', params: { orderId: orderInfo.orderId } });
     } else throw new Error('Variabele "accessKey" is absent');
   } catch (err) {
     if (err instanceof AxiosError && err.response) {
