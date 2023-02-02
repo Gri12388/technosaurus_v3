@@ -60,49 +60,57 @@
           </ul>
         </div>
 
-        <div class="cart__block">
-          <ul class="cart__orders">
-            <li class="cart__order">
-              <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-              <b>18 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Гироскутер Razor Hovertrax 2.0ii</h3>
-              <b>4 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Электрический дрифт-карт Razor Lil’ Crazy</h3>
-              <b>8 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-          </ul>
-
-          <div class="cart__total">
-            <p>Доставка: <b>500 ₽</b></p>
-            <p>Итого: <b>3</b> товара на сумму <b>37 970 ₽</b></p>
-          </div>
-        </div>
+        <RecapInfo
+          :cart-items="cmpOrderInfo.cartItems"
+          :total-price="cmpOrderInfo.totalPrice"
+          :total-prods="cmpTotalProds"
+          :delivery-price="cmpOrderInfo.deliveryPrice"
+        />
       </form>
     </section>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import axios from 'axios';
+import { computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
+import RecapInfo from '@/components/common/RecapInfo.vue';
 
+import { parseOrderObj } from '@/helpers/parsers/orderParsers';
 import { ORDER_BREADCRUMBS } from '@/constants/constants';
+import { orderPath, origin } from '@/constants/paths';
 import { useStore } from '@/store/store';
 
 import type { OrderInfoType } from '@/types/types';
 
 const store = useStore();
+const route = useRoute();
 
+const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 const cmpOrderInfo = computed<OrderInfoType>(() => store.getters.getOrderInfo);
+const cmpTotalProds = computed(() => cmpOrderInfo.value.cartItems.length);
 const cmpOrderId = computed(() => {
   if (cmpOrderInfo.value.orderId === -1) return null;
   else return cmpOrderInfo.value.orderId;
+});
+
+const loadOrderInfo = async () => {
+  try {
+    if (cmpAccessKey.value) {
+      const path = `${origin}${orderPath}/${route.params.orderId}`;
+      const config = { params: { userAccessKey: cmpAccessKey.value } };
+      const res = await axios.get(path, config);
+      const orderInfo = parseOrderObj(res.data);
+      store.commit('setOrderInfo', { orderInfo });
+    } else throw new Error('Variabele "accessKey" is absent');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+onMounted(() => {
+  if (cmpOrderInfo.value.orderId === -1) loadOrderInfo();
 });
 </script>

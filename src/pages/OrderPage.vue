@@ -85,7 +85,12 @@
           </div>
         </div>
 
-        <RecapInfo>
+        <RecapInfo
+          :total-price="cmpTotalPrice"
+          :total-prods="cmpTotalProds"
+          :cart-items="cmpCartItems"
+          :delivery-price="cmpDeliveryPrice"
+        >
           <button
             class="cart__button button button--primery"
             @click.prevent="sentOrder"
@@ -140,6 +145,7 @@ import {
 import { useStore } from '@/store/store';
 
 import type {
+  CartItemType,
   DeliveryType,
   OrderFieldsErrorsType,
   OrderFieldsValuesType,
@@ -155,10 +161,17 @@ const deliveries: Ref<DeliveryType[]> = ref([]);
 const payments: Ref<PaymentType[]> = ref([]);
 
 const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
+const cmpCartItems = computed<CartItemType[]>(() => store.getters.getLocalCart);
 const cmpDeliveryTypeId = computed(() => orderFieldsValues.value.deliveryTypeId);
 const cmpIsError = computed(() => !!Object.values(orderFieldsErrors.value).find((item) => item !== ''));
+const cmpTotalPrice = computed<number>(() => store.getters.getTotalPrice);
 const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+const cmpDeliveryPrice = computed(() => {
+  const found = deliveries.value.find((item) => item.id === cmpDeliveryTypeId.value);
+  if (found) return found.price;
+  else return '0';
+});
 
 const loadPaymentList = async () => {
   try {

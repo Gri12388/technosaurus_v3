@@ -2,16 +2,16 @@
   <div class="cart__block">
     <ul class="cart__orders">
       <RecapItemInfo
-        v-for="cartItem in cmpLocalCart"
+        v-for="cartItem in cartItems"
         :key="cartItem.offer.id"
         :cart-item="cartItem"
       />
     </ul>
 
     <div class="cart__total">
-      <!-- <p>Доставка: <b>{{ 500 | formatNumber }} ₽</b></p> -->
+      <p v-if="cmpIsDelivery">Доставка: <b>{{ formatNumber(+deliveryPrice) }} ₽</b></p>
       <p>Итого:
-        <b>{{ cmpTotalProds }}</b>
+        <b>{{ totalProds }}</b>
         {{ cmpProductWord }} на сумму
         <b>{{ cmpTotalPrice }} ₽</b>
       </p>
@@ -22,19 +22,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineProps } from 'vue';
 
 import RecapItemInfo from '@/components/common/RecapItemInfo.vue';
 
 import { formatNumber, formatProduct } from '@/helpers/formatters';
-import { useStore } from '@/store/store';
 
 import { CartItemType } from '@/types/types';
 
-const store = useStore();
+type Props = {
+  cartItems: CartItemType[];
+  deliveryPrice: string;
+  totalPrice: number;
+  totalProds: number;
+};
 
-const cmpLocalCart = computed<CartItemType[]>(() => store.getters.getLocalCart);
-const cmpTotalPrice = computed<string>(() => formatNumber(store.getters.getTotalPrice));
-const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
-const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+const props = defineProps<Props>();
+
+const cmpProductWord = computed(() => formatProduct(props.totalProds));
+const cmpTotalPrice = computed<string>(() => formatNumber(props.totalPrice));
+const cmpIsDelivery = computed(() => props.deliveryPrice !== '0');
 </script>
