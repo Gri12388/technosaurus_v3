@@ -57,7 +57,7 @@ import {
   initCurPrice,
   initCurTitle,
   initMainProp,
-} from '@/helpers/helpers';
+} from '@/helpers/initers';
 import { useStore } from '@/store/store';
 
 import type { ProdCardType, ProdStateType } from '@/types/types';

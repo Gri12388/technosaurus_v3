@@ -94,18 +94,18 @@ import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
 
 import { COLOR_PROP_ID } from '@/constants/constants';
 import { cartProdsPath, origin, productPath } from '@/constants/paths';
-import { formatColors, formatNumber } from '@/helpers/formatters';
 import {
   initCurColorId,
   initCurOfferId,
   initCurPrice,
   initCurTitle,
-} from '@/helpers/helpers';
+} from '@/helpers/initers';
+import { formatColors, formatNumber } from '@/helpers/formatters';
+import { parseCartObj } from '@/helpers/parsers/commonParsers';
 import { parseProductObj } from '@/helpers/parsers/productParsers';
 import { useStore } from '@/store/store';
 
 import type { BreadCrumbType, ProdStateType, ProductType } from '@/types/types';
-import { parseCartObj } from '@/helpers/parsers/commonParsers';
 
 const route = useRoute();
 const store = useStore();
