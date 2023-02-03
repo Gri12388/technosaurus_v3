@@ -11,8 +11,12 @@ import {
   colorsPath,
   origin,
 } from '@/constants/paths';
-import { parseAccessKeyObj, parseCartObj } from '@/helpers/parsers/commonParsers';
-import { parseCategoriesObj, parseColorsObj } from '@/helpers/parsers/storeParsers';
+import {
+  parseAccessKeyObj,
+  parseCartObj,
+  parseCategoriesObj,
+  parseColorsObj,
+} from '@/helpers/parsers';
 
 import type {
   CartItemType,

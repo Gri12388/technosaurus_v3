@@ -58,7 +58,7 @@ import CounterView from '@/components/common/CounterView.vue';
 import { COLOR_PROP_ID } from '@/constants/constants';
 import { origin, cartProdsPath } from '@/constants/paths';
 import { formatNumber } from '@/helpers/formatters';
-import { parseCartObj } from '@/helpers/parsers/commonParsers';
+import { parseCartObj } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
 import { CartItemType } from '@/types/types';

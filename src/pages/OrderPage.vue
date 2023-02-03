@@ -141,7 +141,7 @@ import {
   parseOrderError,
   parseOrderObj,
   parsePayments,
-} from '@/helpers/parsers/orderParsers';
+} from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
 import type {

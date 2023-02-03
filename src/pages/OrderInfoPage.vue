@@ -78,7 +78,7 @@ import { useRoute } from 'vue-router';
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import RecapInfo from '@/components/common/RecapInfo.vue';
 
-import { parseOrderObj } from '@/helpers/parsers/orderParsers';
+import { parseOrderObj } from '@/helpers/parsers';
 import { ORDER_BREADCRUMBS } from '@/constants/constants';
 import { orderPath, origin } from '@/constants/paths';
 import { useStore } from '@/store/store';

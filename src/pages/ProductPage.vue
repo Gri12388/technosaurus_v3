@@ -101,8 +101,7 @@ import {
   initCurTitle,
 } from '@/helpers/initers';
 import { formatColors, formatNumber } from '@/helpers/formatters';
-import { parseCartObj } from '@/helpers/parsers/commonParsers';
-import { parseProductObj } from '@/helpers/parsers/productParsers';
+import { parseCartObj, parseProductObj } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
 import type { BreadCrumbType, ProdStateType, ProductType } from '@/types/types';

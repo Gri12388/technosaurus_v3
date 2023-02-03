@@ -63,7 +63,7 @@ import PropertyCheckbox from '@/components/catalog/PropertyCheckbox.vue';
 import PriceRange from '@/components/catalog/PriceRange.vue';
 
 import { categoriesPath, origin } from '@/constants/paths';
-import { parseCategory } from '@/helpers/parsers/catalogParsers';
+import { parseCategory } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
 import { ColorType, PropertyType } from '@/types/types';

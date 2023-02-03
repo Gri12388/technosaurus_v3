@@ -25,7 +25,7 @@ import {
 import FilterView from '@/components/catalog/FiltersView.vue';
 import GalleryView from '@/components/catalog/GalleryView.vue';
 
-import { parseProducts } from '@/helpers/parsers/catalogParsers';
+import { parseProducts } from '@/helpers/parsers';
 import { origin, productPath } from '@/constants/paths';
 import { formatCards, formatProduct } from '@/helpers/formatters';
 
