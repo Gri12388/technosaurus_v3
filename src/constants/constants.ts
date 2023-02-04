@@ -43,12 +43,11 @@ export const TABS: TabType[] = [
 
 export const SEE_DETAILS = 'Подробную информацию об ошибке можно посмотреть в консоле разработчика браузера.';
 
-export const BAD_RESPONSE = `Сервер ответил кодом состояния, значение которого выходит за пределы диапазона 2xx.
-${SEE_DETAILS}`;
+export const BAD_RESPONSE = 'Сервер ответил кодом состояния, значение которого выходит за пределы диапазона 2xx.';
 
-export const NO_RESPONSE = `Ответ с сервера не получен. ${SEE_DETAILS}`;
+export const NO_RESPONSE = 'Ответ с сервера не получен.';
 
-export const BAD_CONFIG = `При настроке запроса на сервер произошла ошибка. ${SEE_DETAILS}`;
+export const BAD_CONFIG = 'При настроке запроса на сервер произошла ошибка.';
 
 export const defaultCategory: CategoryType = { id: -1, title: '' };
 

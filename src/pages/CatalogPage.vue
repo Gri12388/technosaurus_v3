@@ -1,6 +1,6 @@
 <template>
   <main class="content container">
-    <ErrorDialog v-model:error="error" v-if="!!error" />
+    <ErrorAlert :error="error" @drop-error="dropError" v-if="!!error" />
 
     <div class="content__top content__top--catalog">
       <h1 class="content__title">Каталог</h1>
@@ -24,7 +24,7 @@ import {
   watch,
 } from 'vue';
 
-import ErrorDialog from '@/components/common/ErrorDialog.vue';
+import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import FilterView from '@/components/catalog/FiltersView.vue';
 import GalleryView from '@/components/catalog/GalleryView.vue';
 
@@ -33,9 +33,9 @@ import { formatCards, formatProduct } from '@/helpers/formatters';
 import { handleAxiosError } from '@/helpers/handlers';
 import { parseProducts } from '@/helpers/parsers';
 
-import type { ProdCardType, QueryType } from '@/types/types';
+import type { ErrorType, ProdCardType, QueryType } from '@/types/types';
 
-const error: Ref<string | null> = ref(null);
+const error: Ref<ErrorType> = ref({ isError: false, errorMessage: '' });
 const page = ref(1);
 const limit = ref(3);
 const pages = ref(0);
@@ -46,7 +46,7 @@ const query: Ref<QueryType> = ref({});
 const cmpProductWord = computed(() => formatProduct(total.value));
 
 const loadProducts = async () => {
-  const path = `${origin}${productPath}`;
+  const path = `${origin}${productPath}1`;
   const config = { params: { ...query.value, page: page.value, limit: limit.value } };
 
   try {
@@ -59,13 +59,17 @@ const loadProducts = async () => {
     if (err instanceof AxiosError) error.value = handleAxiosError(err);
     else if (err instanceof Error) {
       console.error('err:', err);
-      error.value = err.message;
+      error.value = { isError: true, errorMessage: err.message };
     }
   }
 };
 
 const filterProducts = (value: QueryType) => {
   query.value = value;
+};
+
+const dropError = () => {
+  error.value = { isError: false, errorMessage: '' };
 };
 
 watch(query, () => loadProducts());

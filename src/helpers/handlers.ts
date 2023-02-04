@@ -4,12 +4,12 @@ import { AxiosError } from 'axios';
 export const handleAxiosError = (err: AxiosError) => {
   if (err.response) {
     console.error(err.response.data);
-    return BAD_RESPONSE;
+    return { isError: true, errorMessage: BAD_RESPONSE };
   } else if (err.request) {
     console.error(err.request);
-    return NO_RESPONSE;
+    return { isError: true, errorMessage: NO_RESPONSE };
   } else {
     console.log('Error', err.message);
-    return BAD_CONFIG;
+    return { isError: true, errorMessage: BAD_CONFIG };
   }
 };
