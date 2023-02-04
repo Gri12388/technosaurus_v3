@@ -132,7 +132,7 @@ export const store = createStore<State>({
         commit('syncCarts');
         if (!state.accessKey) {
           commit('setAccessKey', { accessKey });
-          localStorage.setItem('accessKey', accessKey);
+          localStorage.setItem(`${origin}${cartPath}`, accessKey);
         }
       } catch (err) {
         console.error(err);

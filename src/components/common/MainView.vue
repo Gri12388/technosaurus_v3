@@ -14,6 +14,7 @@ import { onMounted } from 'vue';
 import FooterView from '@/components/common/FooterView.vue';
 import HeaderView from '@/components/common/HeaderView.vue';
 
+import { cartPath } from '@/constants/paths';
 import { useStore } from '@/store/store';
 
 const store = useStore();
@@ -21,7 +22,7 @@ const store = useStore();
 onMounted(() => {
   store.dispatch('loadCategories');
   store.dispatch('loadColors');
-  const accessKey = localStorage.getItem('accessKey');
+  const accessKey = localStorage.getItem(`${origin}${cartPath}`);
   if (accessKey) store.commit('setAccessKey', { accessKey });
   store.dispatch('loadCart');
 });

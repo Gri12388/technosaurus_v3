@@ -46,7 +46,7 @@ const query: Ref<QueryType> = ref({});
 const cmpProductWord = computed(() => formatProduct(total.value));
 
 const loadProducts = async () => {
-  const path = `${origin}${productPath}1`;
+  const path = `${origin}${productPath}`;
   const config = { params: { ...query.value, page: page.value, limit: limit.value } };
 
   try {
