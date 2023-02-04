@@ -3,12 +3,15 @@
     v-model="cmpIsDialogOpen"
     width="500"
   >
-  <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
+  <v-card >
+        <v-card-title class="d-flex justify-center align-center text-h5">
+          <v-icon icon="mdi-alert-circle-outline" size="large" color="red" class="mr-1"></v-icon>
           Ошибка
         </v-card-title>
 
-        <v-card-text>
+        <v-divider></v-divider>
+
+        <v-card-text class="text-justify">
           {{ error }}
         </v-card-text>
 
@@ -18,7 +21,6 @@
           <v-spacer></v-spacer>
           <v-btn
             color="primary"
-            text
             @click="closeDialog"
           >
             Закрыть
@@ -42,9 +44,12 @@ type Emits = {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const cmpIsDialogOpen = computed(() => !!props.error);
-
 const closeDialog = () => {
   emit('update:error');
 };
+
+const cmpIsDialogOpen = computed({
+  get: () => !!props.error,
+  set: () => closeDialog(),
+});
 </script>

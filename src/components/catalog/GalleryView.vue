@@ -9,6 +9,7 @@
     </ul>
 
     <v-pagination
+      v-if="cmpIsPaginationShown"
       v-model="pageHandler"
       :length="pages"
     ></v-pagination>
@@ -17,9 +18,9 @@
 
 <script setup lang="ts">
 import {
+  computed,
   defineEmits,
   defineProps,
-  computed,
 } from 'vue';
 import ProdCard from '@/components/catalog/ProdCard.vue';
 
@@ -42,5 +43,7 @@ const pageHandler = computed({
   get: () => props.page,
   set: (value: number) => emit('update:page', value),
 });
+
+const cmpIsPaginationShown = computed(() => props.pages > 1);
 
 </script>
