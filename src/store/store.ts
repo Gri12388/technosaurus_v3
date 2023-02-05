@@ -154,7 +154,7 @@ export const store = createStore<State>({
     loadCart: async ({ commit, state }) => {
       try {
         commit('dropServerCartError');
-        const path = `${origin}${cartPath}1`;
+        const path = `${origin}${cartPath}`;
         const config = { params: { userAccessKey: state.accessKey } };
         const res = await axios.get(path, config);
         const { accessKey, cartItems } = parseCartObj(res.data);
@@ -179,7 +179,7 @@ export const store = createStore<State>({
     loadCategories: async ({ commit }) => {
       try {
         commit('dropCategoriesError');
-        const path = `${origin}${categoriesPath}1`;
+        const path = `${origin}${categoriesPath}`;
         const res = await axios.get(path);
         const categories = parseCategoriesObj(res.data);
         commit('setCategories', { categories });
@@ -198,7 +198,7 @@ export const store = createStore<State>({
     loadColors: async ({ commit }) => {
       try {
         commit('dropColorsError');
-        const path = `${origin}${colorsPath}1`;
+        const path = `${origin}${colorsPath}`;
         const res = await axios.get(path);
         const colors = parseColorsObj(res.data);
         commit('setColors', { colors });

@@ -5,7 +5,7 @@
       :to="{ name: 'product', params: { productId: card.id } }"
       @click="saveProdState"
     >
-      <img :src="card.image" alt="curTitle" />
+      <img class="image" :src="card.image" alt="curTitle" />
     </router-link>
 
     <h3 class="catalog__title">
@@ -127,7 +127,12 @@ const saveProdState = () => {
 }
 </style>
 
-<style >
+<style scoped>
+.image {
+display: block;
+object-fit: contain;
+margin: 0 auto;
+}
 .mainPropList {
   display: flex;
   list-style-type: none;
