@@ -1,14 +1,16 @@
 <template>
-  <main class="content container">
+  <main class="content container" :class="cmpFallbackClass">
+    <ErrorAlert :error="loadOrderInfoError" @drop-error="dropOrderInfoError" />
+
     <div class="content__top">
       <BreadCrumbs :breadcrumbs="ORDER_BREADCRUMBS" />
 
-      <h1 class="content__title">
+      <h1 class="content__title" v-if="cmpOrderId">
         Заказ оформлен <span>№ {{ cmpOrderId }}</span>
       </h1>
     </div>
 
-    <section class="cart">
+    <section class="cart" v-if="cmpOrderId">
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <p class="cart__message">
@@ -72,21 +74,31 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
-import { computed, onMounted } from 'vue';
+import axios, { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash';
+import {
+  computed,
+  onMounted,
+  Ref,
+  ref,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
+import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import RecapInfo from '@/components/common/RecapInfo.vue';
 
 import { parseOrderObj } from '@/helpers/parsers';
-import { ORDER_BREADCRUMBS } from '@/constants/constants';
+import { defaultError, ORDER_BREADCRUMBS } from '@/constants/constants';
 import { orderPath, origin } from '@/constants/paths';
+import { handleAxiosError } from '@/helpers/handlers';
 import { useStore } from '@/store/store';
 
-import type { OrderInfoType } from '@/types/types';
+import type { ErrorType, OrderInfoType } from '@/types/types';
 
 const store = useStore();
 const route = useRoute();
+
+const loadOrderInfoError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 
 const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 const cmpOrderInfo = computed<OrderInfoType>(() => store.getters.getOrderInfo);
@@ -94,6 +106,11 @@ const cmpTotalProds = computed(() => cmpOrderInfo.value.cartItems.length);
 const cmpOrderId = computed(() => {
   if (cmpOrderInfo.value.orderId === -1) return null;
   else return cmpOrderInfo.value.orderId;
+});
+
+const cmpFallbackClass = computed(() => {
+  if (!cmpOrderId.value) return 'h-75';
+  return '';
 });
 
 const loadOrderInfo = async () => {
@@ -106,11 +123,20 @@ const loadOrderInfo = async () => {
       store.commit('setOrderInfo', { orderInfo });
     } else throw new Error('Variabele "accessKey" is absent');
   } catch (err) {
-    console.error(err);
+    const errorTitle = 'Не удалось загрузить данные о заказе.';
+    if (err instanceof AxiosError) loadOrderInfoError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      loadOrderInfoError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
   }
 };
 
+const dropOrderInfoError = () => {
+  loadOrderInfoError.value = cloneDeep(defaultError);
+};
+
 onMounted(() => {
-  if (cmpOrderInfo.value.orderId === -1) loadOrderInfo();
+  if (!cmpOrderId.value) loadOrderInfo();
 });
 </script>

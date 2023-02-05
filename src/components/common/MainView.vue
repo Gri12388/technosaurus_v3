@@ -19,7 +19,7 @@ import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import FooterView from '@/components/common/FooterView.vue';
 import HeaderView from '@/components/common/HeaderView.vue';
 
-import { cartPath } from '@/constants/paths';
+import { cartPath, origin } from '@/constants/paths';
 import { useStore } from '@/store/store';
 
 import type { ErrorType } from '@/types/types';
