@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import axios, { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash';
 import {
   computed,
   onMounted,
@@ -28,6 +29,7 @@ import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import FilterView from '@/components/catalog/FiltersView.vue';
 import GalleryView from '@/components/catalog/GalleryView.vue';
 
+import { defaultError } from '@/constants/constants';
 import { origin, productPath } from '@/constants/paths';
 import { formatCards, formatProduct } from '@/helpers/formatters';
 import { handleAxiosError } from '@/helpers/handlers';
@@ -35,7 +37,7 @@ import { parseProducts } from '@/helpers/parsers';
 
 import type { ErrorType, ProdCardType, QueryType } from '@/types/types';
 
-const error: Ref<ErrorType> = ref({ isError: false, errorMessage: '' });
+const error: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const page = ref(1);
 const limit = ref(3);
 const pages = ref(0);
@@ -56,10 +58,11 @@ const loadProducts = async () => {
     pages.value = prods.pages;
     total.value = prods.total;
   } catch (err) {
-    if (err instanceof AxiosError) error.value = handleAxiosError(err);
+    const errorTitle = 'Не удалось загрузить список товаров.';
+    if (err instanceof AxiosError) error.value = handleAxiosError(err, errorTitle);
     else if (err instanceof Error) {
       console.error('err:', err);
-      error.value = { isError: true, errorMessage: err.message };
+      error.value = { isError: true, errorMessage: err.message, errorTitle };
     }
   }
 };
@@ -69,7 +72,7 @@ const filterProducts = (value: QueryType) => {
 };
 
 const dropError = () => {
-  error.value = { isError: false, errorMessage: '' };
+  error.value = cloneDeep(defaultError);
 };
 
 watch(query, () => loadProducts());

@@ -137,5 +137,6 @@ export type PaymentType = {
 
 export type ErrorType = {
   isError: boolean;
+  errorTitle: string;
   errorMessage: string;
 };

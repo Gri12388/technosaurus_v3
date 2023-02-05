@@ -1,9 +1,7 @@
 <template>
-  <v-slide-x-transition mode="out-in" class="duration">
+  <v-slide-x-transition class="duration">
     <v-alert
       v-model="cmpIsError"
-      closable
-      close-icon="mdi-close-thick"
       color="red"
       icon="mdi-alert-circle-outline"
       border="start"
@@ -11,6 +9,7 @@
       variant="outlined"
       title="Ошибка"
     >
+      <p>{{ error.errorTitle }}</p>
       <p>{{ error.errorMessage }}</p>
       <p>{{ SEE_DETAILS }}</p>
     </v-alert>
@@ -18,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineEmits, defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
 
 import { SEE_DETAILS } from '@/constants/constants';
 
@@ -28,21 +27,13 @@ type Props = {
   error: ErrorType;
 };
 
-type Emits = {
-  (e: 'dropError'): void,
-};
-
 const props = defineProps<Props>();
-const emit = defineEmits<Emits>();
 
-const cmpIsError = computed({
-  get: () => props.error.isError,
-  set: () => emit('dropError'),
-});
+const cmpIsError = computed(() => props.error.isError);
 </script>
 
-<style>
+<style scoped>
 .duration {
-  transition-duration: 1s;
+  transition-duration: 0.5s;
 }
 </style>

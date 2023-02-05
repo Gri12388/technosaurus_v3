@@ -5,6 +5,7 @@ import {
   CategoryType,
   ColorType,
   DeliveryType,
+  ErrorType,
   MainPropType,
   OfferType,
   OrderFieldsErrorsType,
@@ -54,6 +55,8 @@ export const defaultCategory: CategoryType = { id: -1, title: '' };
 export const defaultColor: ColorType = { id: -1, code: '', title: '' };
 
 export const defaultDelivery: DeliveryType = { id: -1, price: '', title: '' };
+
+export const defaultError: ErrorType = { isError: false, errorMessage: '', errorTitle: '' };
 
 export const defaultMainProp: MainPropType = { id: -1, code: '', title: '' };
 
