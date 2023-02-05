@@ -1,6 +1,6 @@
 <template>
   <main class="content container">
-    <ErrorAlert :error="error" @drop-error="dropError" v-if="!!error" />
+    <ErrorAlert :error="loadProductsError" @drop-error="dropLoadProductsError" />
 
     <div class="content__top content__top--catalog">
       <h1 class="content__title">Каталог</h1>
@@ -37,7 +37,7 @@ import { parseProducts } from '@/helpers/parsers';
 
 import type { ErrorType, ProdCardType, QueryType } from '@/types/types';
 
-const error: Ref<ErrorType> = ref(cloneDeep(defaultError));
+const loadProductsError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const page = ref(1);
 const limit = ref(3);
 const pages = ref(0);
@@ -59,10 +59,10 @@ const loadProducts = async () => {
     total.value = prods.total;
   } catch (err) {
     const errorTitle = 'Не удалось загрузить список товаров.';
-    if (err instanceof AxiosError) error.value = handleAxiosError(err, errorTitle);
+    if (err instanceof AxiosError) loadProductsError.value = handleAxiosError(err, errorTitle);
     else if (err instanceof Error) {
       console.error('err:', err);
-      error.value = { isError: true, errorMessage: err.message, errorTitle };
+      loadProductsError.value = { isError: true, errorMessage: err.message, errorTitle };
     }
   }
 };
@@ -71,8 +71,8 @@ const filterProducts = (value: QueryType) => {
   query.value = value;
 };
 
-const dropError = () => {
-  error.value = cloneDeep(defaultError);
+const dropLoadProductsError = () => {
+  loadProductsError.value = cloneDeep(defaultError);
 };
 
 watch(query, () => loadProducts());

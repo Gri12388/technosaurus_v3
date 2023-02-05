@@ -1,5 +1,9 @@
 <template>
-  <main class="content container">
+  <main class="content container" :class="cmpFallbackClass">
+    <ErrorAlert :error="addProductError" @drop-error="dropAddProductError" />
+    <ErrorAlert :error="loadProductError" @drop-error="dropLoadProductError" />
+    <SuccessDialog :is-opened="isDialogOpened" />
+
     <div class="content__top">
       <BreadCrumbs :breadcrumbs="cmpBreadCrumbsArr"/>
     </div>
@@ -16,7 +20,7 @@
         <h2 class="item__title" v-if="product">
           {{ curTitle }}
         </h2>
-        <div class="item__form">
+        <div class="item__form" v-if="product">
           <form class="form" action="#" method="POST">
             <b class="item__price" v-if="product">
               {{ cmpCurPrice }} ₽
@@ -57,7 +61,11 @@
                 @update-counter="updateCounter"
               />
 
-              <button class="button button--primery" @click.prevent="addProduct">
+              <button
+                class="button button--primery"
+                :disabled="cmpIsAddToCartButtonDisabled"
+                @click.prevent="addProduct"
+              >
                 В корзину
               </button>
             </div>
@@ -76,7 +84,8 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash';
 import {
   computed,
   onMounted,
@@ -89,10 +98,12 @@ import { useRoute } from 'vue-router';
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
 import CounterView from '@/components/common/CounterView.vue';
+import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import ProductInfo from '@/components/product/ProductInfo.vue';
 import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
+import SuccessDialog from '@/components/product/SuccessDialog.vue';
 
-import { COLOR_PROP_ID } from '@/constants/constants';
+import { COLOR_PROP_ID, defaultError } from '@/constants/constants';
 import { cartProdsPath, origin, productPath } from '@/constants/paths';
 import {
   initCurColorId,
@@ -101,21 +112,39 @@ import {
   initCurTitle,
 } from '@/helpers/initers';
 import { formatColors, formatNumber } from '@/helpers/formatters';
+import { handleAxiosError } from '@/helpers/handlers';
 import { parseCartObj, parseProductObj } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
-import type { BreadCrumbType, ProdStateType, ProductType } from '@/types/types';
+import type {
+  BreadCrumbType,
+  ErrorType,
+  ProdStateType,
+  ProductType,
+} from '@/types/types';
 
 const route = useRoute();
 const store = useStore();
 
+const isDialogOpened = ref(false);
+
+const addProductError: Ref<ErrorType> = ref(cloneDeep(defaultError));
+const loadProductError: Ref<ErrorType> = ref(cloneDeep(defaultError));
+
 const product: Ref<ProductType | null> = ref(null);
 const qty = ref(1);
+
 const curOfferId: Ref<number | null> = ref(null);
 const curColorId: Ref<number | null> = ref(null);
 const curPrice: Ref<number | null> = ref(null);
 const curTitle: Ref<string | null> = ref(null);
 
+const cmpFallbackClass = computed(() => {
+  if (!product.value) return 'h-75';
+  return '';
+});
+
+const cmpIsAddToCartButtonDisabled = computed(() => !product.value);
 const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
   if (product.value && curTitle.value) {
     return [
@@ -123,8 +152,9 @@ const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
       { id: 1, title: product.value.category.title, link: 'catalog' },
       { id: 2, title: curTitle.value },
     ];
-  } else return [];
+  } else return [{ id: 0, title: 'Вернуться в каталог', link: 'catalog' }];
 });
+
 const cmpCurPrice = computed(() => {
   if (curPrice.value) return formatNumber(curPrice.value);
   else return null;
@@ -156,8 +186,9 @@ const cmpCurOfferId = computed({
     curOfferId.value = value;
   },
 });
-const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
+
 const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
+const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
 
 const loadProduct = async () => {
   const { productId } = route.params;
@@ -171,7 +202,12 @@ const loadProduct = async () => {
     }
     product.value = temp;
   } catch (err) {
-    console.error('err:', err);
+    const errorTitle = 'Не удалось загрузить данные о товаре.';
+    if (err instanceof AxiosError) loadProductError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
   }
 };
 
@@ -186,14 +222,28 @@ const addProduct = async () => {
       store.commit('setServerCart', { serverCart: cartItems });
       store.commit('syncCarts');
       qty.value = 1;
+      isDialogOpened.value = true;
     } else throw new Error('Either variabele "offerId" or variable "colorId" or variable "accessKey" is absent');
   } catch (err) {
-    console.error(err);
+    const errorTitle = 'Товар не был добавлен в корзину.';
+    if (err instanceof AxiosError) loadProductError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
   }
 };
 
 const updateCounter = (e: number) => {
   qty.value = e;
+};
+
+const dropAddProductError = () => {
+  addProductError.value = cloneDeep(defaultError);
+};
+
+const dropLoadProductError = () => {
+  loadProductError.value = cloneDeep(defaultError);
 };
 
 onMounted(() => {
