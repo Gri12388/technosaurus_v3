@@ -90,6 +90,7 @@ const updateCounter = (e: number) => {
 
 const deleteCartItem = async () => {
   try {
+    store.commit('setLoadingUp');
     if (cmpAccessKey.value) {
       const path = `${origin}${cartProdsPath}`;
       const config = {
@@ -107,6 +108,8 @@ const deleteCartItem = async () => {
       console.error('err:', err);
       deleteProductError.value = { isError: true, errorMessage: err.message, errorTitle };
     }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 

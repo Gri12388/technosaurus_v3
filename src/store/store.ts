@@ -34,6 +34,7 @@ export type State = {
   categoriesError: ErrorType;
   colors: ColorType[];
   colorsError: ErrorType;
+  loading: number;
   localCart: CartItemType[];
   orderInfo: OrderInfoType;
   prodState: ProdStateType;
@@ -52,6 +53,7 @@ export const store = createStore<State>({
     categoriesError: cloneDeep(defaultError),
     colors: [],
     colorsError: cloneDeep(defaultError),
+    loading: 0,
     localCart: [],
     orderInfo: cloneDeep(defaultOrderInfo),
     prodState: cloneDeep(defaultProdState),
@@ -64,6 +66,7 @@ export const store = createStore<State>({
     getCategoriesError: (state) => state.categoriesError,
     getColors: (state) => state.colors,
     getColorsError: (state) => state.colorsError,
+    getLoading: (state) => state.loading,
     getLocalCart: (state) => state.localCart,
     getOrderInfo: (state) => state.orderInfo,
     getProdState: (state) => state.prodState,
@@ -86,6 +89,9 @@ export const store = createStore<State>({
     },
     dropColorsError: (state) => {
       state.colorsError = cloneDeep(defaultError);
+    },
+    dropLoading: (state) => {
+      state.loading = 0;
     },
     dropLocalCart: (state) => {
       state.localCart = [];
@@ -116,6 +122,12 @@ export const store = createStore<State>({
     },
     setColorsError: (state, payload: { colorsError: ErrorType }) => {
       state.colorsError = payload.colorsError;
+    },
+    setLoadingUp: (state) => {
+      state.loading += 1;
+    },
+    setLoadingDown: (state) => {
+      state.loading = state.loading > 0 ? state.loading - 1 : 0;
     },
     setLocalCart(state, payload: { localCart: CartItemType[] }) {
       state.localCart = payload.localCart;
@@ -154,6 +166,7 @@ export const store = createStore<State>({
     loadCart: async ({ commit, state }) => {
       try {
         commit('dropServerCartError');
+        commit('setLoadingUp');
         const path = `${origin}${cartPath}`;
         const config = { params: { userAccessKey: state.accessKey } };
         const res = await axios.get(path, config);
@@ -174,11 +187,14 @@ export const store = createStore<State>({
           const serverCartError = { isError: true, errorMessage: err.message, errorTitle };
           commit('setServerCartError', { serverCartError });
         }
+      } finally {
+        commit('setLoadingDown');
       }
     },
     loadCategories: async ({ commit }) => {
       try {
         commit('dropCategoriesError');
+        commit('setLoadingUp');
         const path = `${origin}${categoriesPath}`;
         const res = await axios.get(path);
         const categories = parseCategoriesObj(res.data);
@@ -193,11 +209,14 @@ export const store = createStore<State>({
           const categoriesError = { isError: true, errorMessage: err.message, errorTitle };
           commit('setCategoriesError', { categoriesError });
         }
+      } finally {
+        commit('setLoadingDown');
       }
     },
     loadColors: async ({ commit }) => {
       try {
         commit('dropColorsError');
+        commit('setLoadingUp');
         const path = `${origin}${colorsPath}`;
         const res = await axios.get(path);
         const colors = parseColorsObj(res.data);
@@ -212,6 +231,8 @@ export const store = createStore<State>({
           const colorsError = { isError: true, errorMessage: err.message, errorTitle };
           commit('setColorsError', { colorsError });
         }
+      } finally {
+        commit('setLoadingDown');
       }
     },
   },

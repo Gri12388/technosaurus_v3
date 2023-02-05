@@ -36,6 +36,7 @@ import { handleAxiosError } from '@/helpers/handlers';
 import { parseProducts } from '@/helpers/parsers';
 
 import type { ErrorType, ProdCardType, QueryType } from '@/types/types';
+import { store } from '@/store/store';
 
 const loadProductsError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const page = ref(1);
@@ -48,10 +49,10 @@ const query: Ref<QueryType> = ref({});
 const cmpProductWord = computed(() => formatProduct(total.value));
 
 const loadProducts = async () => {
-  const path = `${origin}${productPath}`;
-  const config = { params: { ...query.value, page: page.value, limit: limit.value } };
-
   try {
+    store.commit('setLoadingUp');
+    const path = `${origin}${productPath}`;
+    const config = { params: { ...query.value, page: page.value, limit: limit.value } };
     const res = await axios.get(path, config);
     const prods = parseProducts(res.data);
     cards.value = formatCards(prods.cards);
@@ -64,6 +65,8 @@ const loadProducts = async () => {
       console.error('err:', err);
       loadProductsError.value = { isError: true, errorMessage: err.message, errorTitle };
     }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 

@@ -63,7 +63,7 @@
 
               <button
                 class="button button--primery"
-                :disabled="cmpIsAddToCartButtonDisabled"
+                :disabled="cmpIsLoading"
                 @click.prevent="addProduct"
               >
                 В корзину
@@ -144,7 +144,7 @@ const cmpFallbackClass = computed(() => {
   return '';
 });
 
-const cmpIsAddToCartButtonDisabled = computed(() => !product.value);
+const cmpIsLoading = computed(() => store.getters.getLoading > 0);
 const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
   if (product.value && curTitle.value) {
     return [
@@ -191,10 +191,10 @@ const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
 
 const loadProduct = async () => {
-  const { productId } = route.params;
-  const path = `${origin}${productPath}/${productId}`;
-
   try {
+    store.commit('setLoadingUp');
+    const { productId } = route.params;
+    const path = `${origin}${productPath}/${productId}`;
     const res = await axios.get(path);
     const temp = parseProductObj(res.data);
     if (temp.mainProp.id === COLOR_PROP_ID) {
@@ -208,11 +208,14 @@ const loadProduct = async () => {
       console.error('err:', err);
       loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
     }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 
 const addProduct = async () => {
   try {
+    store.commit('setLoadingUp');
     if (cmpCurOfferId.value && cmpCurColorId.value && cmpAccessKey.value) {
       const path = `${origin}${cartProdsPath}`;
       const config = { params: { userAccessKey: cmpAccessKey.value } };
@@ -231,6 +234,8 @@ const addProduct = async () => {
       console.error('err:', err);
       loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
     }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 

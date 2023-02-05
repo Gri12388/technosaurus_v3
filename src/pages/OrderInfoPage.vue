@@ -115,6 +115,7 @@ const cmpFallbackClass = computed(() => {
 
 const loadOrderInfo = async () => {
   try {
+    store.commit('setLoadingUp');
     if (cmpAccessKey.value) {
       const path = `${origin}${orderPath}/${route.params.orderId}`;
       const config = { params: { userAccessKey: cmpAccessKey.value } };
@@ -129,6 +130,8 @@ const loadOrderInfo = async () => {
       console.error('err:', err);
       loadOrderInfoError.value = { isError: true, errorMessage: err.message, errorTitle };
     }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 

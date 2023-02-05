@@ -201,6 +201,7 @@ const loadDeliveryList = async () => {
 
 const sentOrder = async () => {
   try {
+    store.commit('setLoadingUp');
     if (cmpAccessKey.value) {
       orderFieldsErrors.value = cloneDeep(defaultOrderFieldErrors);
       const path = `${origin}${orderPath}`;
@@ -219,6 +220,8 @@ const sentOrder = async () => {
       orderFieldsErrors.value = parseOrderError(err.response.data);
     }
     console.error(err);
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 

@@ -2,22 +2,31 @@
   <v-app>
     <v-main>
       <HeaderView />
+
+      <LinearLoadingIndicatior :is-loading="cmpIsLoading" />
       <ErrorAlert :error="cmpCategoriesError" />
       <ErrorAlert :error="cmpColorsError" />
       <ErrorAlert :error="cmpServerCartError" />
       <v-sheet :class="cmpFallbackHeight" v-if="!cmpIsRouterVeiwShown"></v-sheet>
+
       <router-view v-if="cmpIsRouterVeiwShown"/>
+
       <FooterView />
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, Ref } from 'vue';
+import {
+  computed,
+  onMounted,
+  Ref,
+} from 'vue';
 
 import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import FooterView from '@/components/common/FooterView.vue';
 import HeaderView from '@/components/common/HeaderView.vue';
+import LinearLoadingIndicatior from '@/components/common/LinearLoadIndicator.vue';
 
 import { cartPath, origin } from '@/constants/paths';
 import { useStore } from '@/store/store';
@@ -25,6 +34,8 @@ import { useStore } from '@/store/store';
 import type { ErrorType } from '@/types/types';
 
 const store = useStore();
+
+const cmpIsLoading = computed(() => store.getters.getLoading > 0);
 
 const cmpCategoriesError: Ref<ErrorType> = computed(() => store.getters.getCategoriesError);
 const cmpColorsError: Ref<ErrorType> = computed(() => store.getters.getColorsError);
@@ -54,3 +65,9 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+.fallback {
+  height: 6px;
+}
+</style>
