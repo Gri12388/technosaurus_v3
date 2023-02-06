@@ -3,6 +3,8 @@
     <h2 class="filter__title">Фильтры</h2>
 
     <form class="filter__form form">
+      <PageLimitSelect v-model:cur-limit="curLimit" />
+
       <PriceRange
         :price-max="priceMax"
         :price-min="priceMin"
@@ -59,17 +61,16 @@ import {
 
 import CategorySelect from '@/components/catalog/CategorySelect.vue';
 import ColorCheckboxItem from '@/components/catalog/ColorCheckboxItem.vue';
+import PageLimitSelect from '@/components/catalog/PageLimitSelect.vue';
 import PropertyCheckbox from '@/components/catalog/PropertyCheckbox.vue';
 import PriceRange from '@/components/catalog/PriceRange.vue';
 
+import { COLOR_PROP_ID, defaultLimit } from '@/constants/constants';
 import { categoriesPath, origin } from '@/constants/paths';
 import { parseCategory } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
-import { ColorType, PropertyType } from '@/types/types';
-import { COLOR_PROP_ID } from '@/constants/constants';
-
-import type { QueryType } from '@/types/types';
+import type { ColorType, PropertyType, QueryType } from '@/types/types';
 
 type Emits = {
   (e: 'filterProducts', value: QueryType): void,
@@ -84,6 +85,7 @@ const priceMin: Ref<string | null> = ref(null);
 const priceMax: Ref<string | null> = ref(null);
 const curCategId: Ref<number | null> = ref(null);
 const curColorsIds: Ref<number[]> = ref([]);
+const curLimit = ref(defaultLimit);
 const curProperties: Ref<{ [index: string]: string[] }> = ref({});
 const properties: Ref<PropertyType[]> = ref([]);
 
@@ -119,6 +121,7 @@ const updatePriceMax = (e: string | null) => {
 
 const getQuery = () => ({
   categoryId: curCategId.value ? curCategId.value : undefined,
+  limit: curLimit.value,
   minPrice: priceMin.value ? Number.parseFloat(priceMin.value) : undefined,
   maxPrice: priceMax.value ? Number.parseFloat(priceMax.value) : undefined,
   props: Object.keys(curProperties.value).length > 0 ? curProperties.value : undefined,

@@ -29,7 +29,7 @@ import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import FilterView from '@/components/catalog/FiltersView.vue';
 import GalleryView from '@/components/catalog/GalleryView.vue';
 
-import { defaultError } from '@/constants/constants';
+import { defaultError, defaultLimit } from '@/constants/constants';
 import { origin, productPath } from '@/constants/paths';
 import { formatCards, formatProduct } from '@/helpers/formatters';
 import { handleAxiosError } from '@/helpers/handlers';
@@ -40,7 +40,7 @@ import { store } from '@/store/store';
 
 const loadProductsError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const page = ref(1);
-const limit = ref(3);
+const limit = ref(defaultLimit);
 const pages = ref(0);
 const total = ref(0);
 const cards: Ref<ProdCardType[]> = ref([]);
@@ -52,7 +52,7 @@ const loadProducts = async () => {
   try {
     store.commit('setLoadingUp');
     const path = `${origin}${productPath}`;
-    const config = { params: { ...query.value, page: page.value, limit: limit.value } };
+    const config = { params: { page: page.value, limit: limit.value, ...query.value } };
     const res = await axios.get(path, config);
     const prods = parseProducts(res.data);
     cards.value = formatCards(prods.cards);

@@ -15,7 +15,9 @@
 
 <script setup lang="ts">
 import { computed, defineEmits, defineProps } from 'vue';
+
 import { useStore } from '@/store/store';
+
 import type { CategoryType } from '@/types/types';
 
 type Props = {

@@ -2,6 +2,7 @@ export type ObjType = { [index: string]: string };
 
 export type QueryType = {
   categoryId?: number;
+  limit?: number,
   minPrice?: number;
   maxPrice?: number;
   props?: { [index: string]: string[] };
