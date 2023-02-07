@@ -5,14 +5,12 @@ import { createStore, useStore as baseUseStore, Store } from 'vuex';
 
 import { defaultError, defaultOrderInfo, defaultProdState } from '@/constants/constants';
 import {
-  accessKeyPath,
   cartPath,
   categoriesPath,
   colorsPath,
   origin,
 } from '@/constants/paths';
 import {
-  parseAccessKeyObj,
   parseCartObj,
   parseCategoriesObj,
   parseColorsObj,
@@ -153,16 +151,6 @@ export const store = createStore<State>({
     },
   },
   actions: {
-    loadAccessKey: async ({ commit }) => {
-      const path = `${origin}${accessKeyPath}`;
-      try {
-        const res = await axios.get(path);
-        const accessKey = parseAccessKeyObj(res);
-        commit('setAccessKey', { accessKey });
-      } catch (err) {
-        console.error(err);
-      }
-    },
     loadCart: async ({ commit, state }) => {
       try {
         commit('dropServerCartError');

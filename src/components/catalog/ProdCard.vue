@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { cloneDeep } from 'lodash';
 import {
   computed,
@@ -65,6 +65,7 @@ import {
   Ref,
 } from 'vue';
 
+import { cartProdsPath, origin } from '@/constants/paths';
 import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
 import ErrorDialog from '@/components/common/ErrorDialog.vue';
 import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
@@ -79,7 +80,7 @@ import {
   initMainProp,
 } from '@/helpers/initers';
 import { handleAxiosError } from '@/helpers/handlers';
-import { addProductRequest } from '@/helpers/requesters';
+import { parseCartObj } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
 import type { ErrorType, ProdCardType, ProdStateType } from '@/types/types';
@@ -158,13 +159,11 @@ const addProduct = async () => {
   try {
     isLoading.value = true;
     if (cmpCurOfferId.value && cmpCurColorId.value && cmpAccessKey.value) {
-      const params = {
-        accessKey: cmpAccessKey.value,
-        curColorId: cmpCurColorId.value,
-        curOfferId: cmpCurOfferId.value,
-        qty: 1,
-      };
-      const { cartItems } = await addProductRequest(params);
+      const path = `${origin}${cartProdsPath}`;
+      const config = { params: { userAccessKey: cmpAccessKey.value } };
+      const data = { productOfferId: cmpCurOfferId.value, colorId: cmpCurColorId.value, quantity: 1 };
+      const res = await axios.post(path, data, config);
+      const { cartItems } = parseCartObj(res.data);
       store.commit('setServerCart', { serverCart: cartItems });
       store.commit('syncCarts');
       isShown.value = false;
