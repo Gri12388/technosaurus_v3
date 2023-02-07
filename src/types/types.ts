@@ -1,11 +1,32 @@
-export type ObjType = { [index: string]: string };
+export type BreadCrumbType = {
+  id: number;
+  title: string;
+  link?: string;
+};
 
-export type QueryType = {
-  categoryId?: number;
-  limit?: number,
-  minPrice?: number;
-  maxPrice?: number;
-  props?: { [index: string]: string[] };
+export type CategoryType = {
+  id: number;
+  title: string;
+  properties?: PropertyType[];
+};
+
+export type ColorType = {
+  id: number;
+  code: string;
+  title: string;
+  offer?: OfferType;
+};
+
+export type DeliveryType = {
+  id: number;
+  title: string;
+  price: string;
+};
+
+export type ErrorType = {
+  isError: boolean;
+  errorTitle: string;
+  errorMessage: string;
 };
 
 export type MainPropType = {
@@ -14,6 +35,8 @@ export type MainPropType = {
   title: string;
 };
 
+export type ObjType = { [index: string]: string };
+
 export type OfferType = {
   id: number;
   title: string;
@@ -21,11 +44,27 @@ export type OfferType = {
   value: string;
 };
 
-export type ColorType = {
+export type OrderFieldsErrorsType = {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  comment: string;
+};
+
+export type OrderFieldsValuesType = {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  deliveryTypeId: number;
+  paymentTypeId: number;
+  comment: string;
+};
+
+export type PaymentType = {
   id: number;
-  code: string;
   title: string;
-  offer?: OfferType;
 };
 
 export type PropertyValueType = {
@@ -40,18 +79,6 @@ export type PropertyType = {
   values: PropertyValueType[];
 };
 
-export type CategoryType = {
-  id: number;
-  title: string;
-  properties?: PropertyType[];
-};
-
-export type SpecificationType = {
-  id: number;
-  title: string;
-  value: string;
-}
-
 export type ProdCardType = {
   id: number;
   image: string;
@@ -60,23 +87,31 @@ export type ProdCardType = {
   offers: OfferType[];
 };
 
-export type ProductType = ProdCardType & {
-  category: CategoryType;
-  content: string;
-  specifications: SpecificationType[];
-};
-
-export type BreadCrumbType = {
-  id: number;
-  title: string;
-  link?: string;
-};
-
 export type ProdStateType = {
   curOfferId: number | null;
   curColorId: number | null;
   curPrice: number | null;
   curTitle: string | null;
+};
+
+export type QueryType = {
+  categoryId?: number;
+  limit?: number,
+  minPrice?: number;
+  maxPrice?: number;
+  props?: { [index: string]: string[] };
+};
+
+export type SpecificationType = {
+  id: number;
+  title: string;
+  value: string;
+}
+
+export type ProductType = ProdCardType & {
+  category: CategoryType;
+  content: string;
+  specifications: SpecificationType[];
 };
 
 export type TabType = {
@@ -105,39 +140,4 @@ export type OrderInfoType = {
   payment: string;
   comment: string;
   cartItems: CartItemType[];
-};
-
-export type OrderFieldsValuesType = {
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  deliveryTypeId: number;
-  paymentTypeId: number;
-  comment: string;
-};
-
-export type OrderFieldsErrorsType = {
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  comment: string;
-};
-
-export type DeliveryType = {
-  id: number;
-  title: string;
-  price: string;
-};
-
-export type PaymentType = {
-  id: number;
-  title: string;
-};
-
-export type ErrorType = {
-  isError: boolean;
-  errorTitle: string;
-  errorMessage: string;
 };
