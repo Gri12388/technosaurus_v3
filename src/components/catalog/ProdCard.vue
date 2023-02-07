@@ -36,6 +36,7 @@
           v-model:cur-offer-id="cmpCurOfferId"
       />
     </ul>
+    <v-btn class="btn" @click="addProduct">В конзину</v-btn>
   </li>
 </template>
 
@@ -58,6 +59,7 @@ import {
   initCurTitle,
   initMainProp,
 } from '@/helpers/initers';
+import { addProductRequest } from '@/helpers/requesters';
 import { useStore } from '@/store/store';
 
 import type { ProdCardType, ProdStateType } from '@/types/types';
@@ -74,6 +76,8 @@ const curOfferId = ref(initCurOfferId(props.card));
 const curTitle = ref(initCurTitle(props.card));
 const curPrice = ref(initCurPrice(props.card));
 const mainProp = ref(initMainProp(props.card));
+
+const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 
 const cmpCurColorId = computed({
   get: () => curColorId.value,
@@ -119,6 +123,32 @@ const saveProdState = () => {
 
   store.commit('setProdState', { prodState });
 };
+
+const addProduct = async () => {
+  try {
+    store.commit('setLoadingUp');
+    if (cmpCurOfferId.value && cmpCurColorId.value && cmpAccessKey.value) {
+      const params = {
+        accessKey: cmpAccessKey.value,
+        curColorId: cmpCurColorId.value,
+        curOfferId: cmpCurOfferId.value,
+        qty: 1,
+      };
+      const { cartItems } = await addProductRequest(params);
+      store.commit('setServerCart', { serverCart: cartItems });
+      store.commit('syncCarts');
+    } else throw new Error('Either variabele "offerId" or variable "colorId" or variable "accessKey" is absent');
+  } catch (err) {
+    // const errorTitle = 'Товар не был добавлен в корзину.';
+    // if (err instanceof AxiosError) loadProductError.value = handleAxiosError(err, errorTitle);
+    // else if (err instanceof Error) {
+    //   console.error('err:', err);
+    //   loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
+    // }
+  } finally {
+    store.commit('setLoadingDown');
+  }
+};
 </script>
 
 <style scoped>
@@ -128,6 +158,11 @@ const saveProdState = () => {
 </style>
 
 <style scoped>
+.btn {
+  background: #9eff00;
+  color: #fff;
+  margin-top: 4px;
+}
 .image {
 display: block;
 object-fit: contain;

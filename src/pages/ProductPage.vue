@@ -104,7 +104,7 @@ import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
 import SuccessDialog from '@/components/product/SuccessDialog.vue';
 
 import { COLOR_PROP_ID, defaultError } from '@/constants/constants';
-import { cartProdsPath, origin, productPath } from '@/constants/paths';
+import { origin, productPath } from '@/constants/paths';
 import {
   initCurColorId,
   initCurOfferId,
@@ -112,8 +112,9 @@ import {
   initCurTitle,
 } from '@/helpers/initers';
 import { formatColors, formatNumber } from '@/helpers/formatters';
+import { addProductRequest } from '@/helpers/requesters';
 import { handleAxiosError } from '@/helpers/handlers';
-import { parseCartObj, parseProductObj } from '@/helpers/parsers';
+import { parseProductObj } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
 import type {
@@ -217,11 +218,13 @@ const addProduct = async () => {
   try {
     store.commit('setLoadingUp');
     if (cmpCurOfferId.value && cmpCurColorId.value && cmpAccessKey.value) {
-      const path = `${origin}${cartProdsPath}`;
-      const config = { params: { userAccessKey: cmpAccessKey.value } };
-      const data = { productOfferId: cmpCurOfferId.value, colorId: cmpCurColorId.value, quantity: qty.value };
-      const res = await axios.post(path, data, config);
-      const { cartItems } = parseCartObj(res.data);
+      const params = {
+        accessKey: cmpAccessKey.value,
+        curColorId: cmpCurColorId.value,
+        curOfferId: cmpCurOfferId.value,
+        qty: qty.value,
+      };
+      const { cartItems } = await addProductRequest(params);
       store.commit('setServerCart', { serverCart: cartItems });
       store.commit('syncCarts');
       qty.value = 1;
