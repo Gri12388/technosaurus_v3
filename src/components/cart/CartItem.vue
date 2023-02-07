@@ -1,5 +1,5 @@
 <template>
-  <ErrorAlert :error="deleteProductError" @drop-error="dropDeleteProductError" />
+  <ErrorDialog :error="deleteProductError" @close-dialog="closeDialog" />
   <li class="cart__item product">
     <div class="product__pic">
       <img
@@ -58,7 +58,7 @@ import {
 } from 'vue';
 
 import CounterView from '@/components/common/CounterView.vue';
-import ErrorAlert from '@/components/common/ErrorAlert.vue';
+import ErrorDialog from '@/components/common/ErrorDialog.vue';
 
 import { COLOR_PROP_ID, defaultError } from '@/constants/constants';
 import { origin, cartProdsPath } from '@/constants/paths';
@@ -129,8 +129,8 @@ const changeCartItem = async () => {
   }
 };
 
-const dropDeleteProductError = () => {
-  deleteProductError.value = cloneDeep(defaultError);
+const closeDialog = () => {
+  deleteProductError.value.isError = false;
 };
 
 watch(qty, () => changeCartItem());
