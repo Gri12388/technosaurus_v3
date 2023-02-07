@@ -1,4 +1,5 @@
 <template>
+  <ErrorDialog :error="addProductError" @closeDialog="closeDialog" />
   <li class="catalog__item">
     <router-link
       class="catalog__pic"
@@ -55,16 +56,20 @@
 </template>
 
 <script setup lang="ts">
+import { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash';
 import {
   computed,
   defineProps,
   ref,
+  Ref,
 } from 'vue';
 
 import ColorRadioItem from '@/components/common/ColorRadioItem.vue';
+import ErrorDialog from '@/components/common/ErrorDialog.vue';
 import PropertyRadioItem from '@/components/catalog/PropertyRadioItem.vue';
 
-import { COLOR_PROP_ID } from '@/constants/constants';
+import { COLOR_PROP_ID, defaultError } from '@/constants/constants';
 import { formatNumber } from '@/helpers/formatters';
 import {
   initCurColorId,
@@ -73,10 +78,11 @@ import {
   initCurTitle,
   initMainProp,
 } from '@/helpers/initers';
+import { handleAxiosError } from '@/helpers/handlers';
 import { addProductRequest } from '@/helpers/requesters';
 import { useStore } from '@/store/store';
 
-import type { ProdCardType, ProdStateType } from '@/types/types';
+import type { ErrorType, ProdCardType, ProdStateType } from '@/types/types';
 
 type Props = {
   card: ProdCardType;
@@ -84,6 +90,8 @@ type Props = {
 
 const store = useStore();
 const props = defineProps<Props>();
+
+const addProductError:Ref<ErrorType> = ref(cloneDeep(defaultError));
 
 const isLoading = ref(false);
 const isShown = ref(true);
@@ -142,6 +150,10 @@ const saveProdState = () => {
   store.commit('setProdState', { prodState });
 };
 
+const closeDialog = () => {
+  addProductError.value.isError = false;
+};
+
 const addProduct = async () => {
   try {
     isLoading.value = true;
@@ -158,12 +170,12 @@ const addProduct = async () => {
       isShown.value = false;
     } else throw new Error('Either variabele "offerId" or variable "colorId" or variable "accessKey" is absent');
   } catch (err) {
-    // const errorTitle = 'Товар не был добавлен в корзину.';
-    // if (err instanceof AxiosError) loadProductError.value = handleAxiosError(err, errorTitle);
-    // else if (err instanceof Error) {
-    //   console.error('err:', err);
-    //   loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
-    // }
+    const errorTitle = `Товар "${curTitle.value}" не был добавлен в корзину.`;
+    if (err instanceof AxiosError) addProductError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      addProductError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
   } finally {
     isLoading.value = false;
   }

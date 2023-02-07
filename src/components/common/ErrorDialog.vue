@@ -12,7 +12,9 @@
         <v-divider></v-divider>
 
         <v-card-text class="text-justify">
-          {{ error }}
+          <p>{{ error.errorTitle }}</p>
+          <p>{{ error.errorMessage }}</p>
+          <p>{{ SEE_DETAILS }}</p>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -31,25 +33,28 @@
 </template>
 
 <script setup lang="ts">
+import { ErrorType } from '@/types/types';
 import { computed, defineEmits, defineProps } from 'vue';
 
+import { SEE_DETAILS } from '@/constants/constants';
+
 type Props = {
-  error: string | null;
-}
+  error: ErrorType;
+};
 
 type Emits = {
-  (e: 'update:error'): void,
+  (e: 'closeDialog'): void,
 };
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const closeDialog = () => {
-  emit('update:error');
+  emit('closeDialog');
 };
 
 const cmpIsDialogOpen = computed({
-  get: () => !!props.error,
+  get: () => props.error.isError,
   set: () => closeDialog(),
 });
 </script>
