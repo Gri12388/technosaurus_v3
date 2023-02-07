@@ -36,7 +36,21 @@
           v-model:cur-offer-id="cmpCurOfferId"
       />
     </ul>
-    <v-btn class="btn" @click="addProduct">В конзину</v-btn>
+    <v-btn
+      v-if="isShown"
+      class="btn"
+      :disabled="isLoading"
+      @click="addProduct"
+    >
+      В конзину
+    </v-btn>
+    <v-btn v-else class="btn" @click="isShown=true">Товар успешно добавлен</v-btn>
+    <v-progress-linear
+        v-if="isLoading"
+        indeterminate
+        color="deep-purple-accent-4"
+        class="progress"
+      ></v-progress-linear>
   </li>
 </template>
 
@@ -71,6 +85,9 @@ type Props = {
 const store = useStore();
 const props = defineProps<Props>();
 
+const isLoading = ref(false);
+const isShown = ref(true);
+
 const curColorId = ref(initCurColorId(props.card));
 const curOfferId = ref(initCurOfferId(props.card));
 const curTitle = ref(initCurTitle(props.card));
@@ -89,8 +106,8 @@ const cmpCurColorId = computed({
         curPrice.value = found.offer.price;
       }
     }
-
     curColorId.value = value;
+    isShown.value = true;
   },
 });
 
@@ -105,6 +122,7 @@ const cmpCurOfferId = computed({
       }
     }
     curOfferId.value = value;
+    isShown.value = true;
   },
 });
 
@@ -126,7 +144,7 @@ const saveProdState = () => {
 
 const addProduct = async () => {
   try {
-    store.commit('setLoadingUp');
+    isLoading.value = true;
     if (cmpCurOfferId.value && cmpCurColorId.value && cmpAccessKey.value) {
       const params = {
         accessKey: cmpAccessKey.value,
@@ -137,6 +155,7 @@ const addProduct = async () => {
       const { cartItems } = await addProductRequest(params);
       store.commit('setServerCart', { serverCart: cartItems });
       store.commit('syncCarts');
+      isShown.value = false;
     } else throw new Error('Either variabele "offerId" or variable "colorId" or variable "accessKey" is absent');
   } catch (err) {
     // const errorTitle = 'Товар не был добавлен в корзину.';
@@ -146,7 +165,7 @@ const addProduct = async () => {
     //   loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
     // }
   } finally {
-    store.commit('setLoadingDown');
+    isLoading.value = false;
   }
 };
 </script>
@@ -171,5 +190,10 @@ margin: 0 auto;
 .mainPropList {
   display: flex;
   list-style-type: none;
+}
+.progress {
+  top: -6px !important;
+  left: 23% !important;
+  width: 90.38px;
 }
 </style>
