@@ -155,23 +155,24 @@ import type {
 const store = useStore();
 const router = useRouter();
 
-const orderFieldsValues: Ref<OrderFieldsValuesType> = ref(cloneDeep(defaultOrderFieldsValues));
-const orderFieldsErrors: Ref<OrderFieldsErrorsType> = ref(cloneDeep(defaultOrderFieldErrors));
 const deliveries: Ref<DeliveryType[]> = ref([]);
+const orderFieldsErrors: Ref<OrderFieldsErrorsType> = ref(cloneDeep(defaultOrderFieldErrors));
+const orderFieldsValues: Ref<OrderFieldsValuesType> = ref(cloneDeep(defaultOrderFieldsValues));
 const payments: Ref<PaymentType[]> = ref([]);
+
+const cmpDeliveryTypeId = computed(() => orderFieldsValues.value.deliveryTypeId);
+const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
 
 const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 const cmpCartItems = computed<CartItemType[]>(() => store.getters.getLocalCart);
-const cmpDeliveryTypeId = computed(() => orderFieldsValues.value.deliveryTypeId);
-const cmpIsError = computed(() => !!Object.values(orderFieldsErrors.value).find((item) => item !== ''));
-const cmpTotalPrice = computed<number>(() => store.getters.getTotalPrice);
-const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
-const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
 const cmpDeliveryPrice = computed(() => {
   const found = deliveries.value.find((item) => item.id === cmpDeliveryTypeId.value);
   if (found) return found.price;
   else return '0';
 });
+const cmpIsError = computed(() => !!Object.values(orderFieldsErrors.value).find((item) => item !== ''));
+const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+const cmpTotalPrice = computed<number>(() => store.getters.getTotalPrice);
 
 const loadPaymentList = async () => {
   try {

@@ -126,25 +126,17 @@ import type {
 const route = useRoute();
 const store = useStore();
 
-const isDialogOpened = ref(false);
-
 const addProductError: Ref<ErrorType> = ref(cloneDeep(defaultError));
-const loadProductError: Ref<ErrorType> = ref(cloneDeep(defaultError));
-
-const product: Ref<ProductType | null> = ref(null);
-const qty = ref(1);
-
 const curOfferId: Ref<number | null> = ref(null);
 const curColorId: Ref<number | null> = ref(null);
 const curPrice: Ref<number | null> = ref(null);
 const curTitle: Ref<string | null> = ref(null);
+const isDialogOpened = ref(false);
+const loadProductError: Ref<ErrorType> = ref(cloneDeep(defaultError));
+const product: Ref<ProductType | null> = ref(null);
+const qty = ref(1);
 
-const cmpFallbackClass = computed(() => {
-  if (!product.value) return 'h-75';
-  return '';
-});
-
-const cmpIsLoading = computed(() => store.getters.getLoading > 0);
+const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
   if (product.value && curTitle.value) {
     return [
@@ -153,11 +145,6 @@ const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
       { id: 2, title: curTitle.value },
     ];
   } else return [{ id: 0, title: 'Вернуться в каталог', link: 'catalog' }];
-});
-
-const cmpCurPrice = computed(() => {
-  if (curPrice.value) return formatNumber(curPrice.value);
-  else return null;
 });
 const cmpCurColorId = computed({
   get: () => curColorId.value,
@@ -186,32 +173,16 @@ const cmpCurOfferId = computed({
     curOfferId.value = value;
   },
 });
-
-const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
+const cmpCurPrice = computed(() => {
+  if (curPrice.value) return formatNumber(curPrice.value);
+  else return null;
+});
+const cmpIsLoading = computed(() => store.getters.getLoading > 0);
+const cmpFallbackClass = computed(() => {
+  if (!product.value) return 'h-75';
+  return '';
+});
 const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
-
-const loadProduct = async () => {
-  try {
-    store.commit('setLoadingUp');
-    const { productId } = route.params;
-    const path = `${origin}${productPath}/${productId}`;
-    const res = await axios.get(path);
-    const temp = parseProductObj(res.data);
-    if (temp.mainProp.id === COLOR_PROP_ID) {
-      temp.colors = formatColors(temp.colors, temp.offers);
-    }
-    product.value = temp;
-  } catch (err) {
-    const errorTitle = 'Не удалось загрузить данные о товаре.';
-    if (err instanceof AxiosError) loadProductError.value = handleAxiosError(err, errorTitle);
-    else if (err instanceof Error) {
-      console.error('err:', err);
-      loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
-    }
-  } finally {
-    store.commit('setLoadingDown');
-  }
-};
 
 const addProduct = async () => {
   try {
@@ -239,10 +210,6 @@ const addProduct = async () => {
   }
 };
 
-const updateCounter = (e: number) => {
-  qty.value = e;
-};
-
 const dropAddProductError = () => {
   addProductError.value = cloneDeep(defaultError);
 };
@@ -251,10 +218,36 @@ const dropLoadProductError = () => {
   loadProductError.value = cloneDeep(defaultError);
 };
 
+const loadProduct = async () => {
+  try {
+    store.commit('setLoadingUp');
+    const { productId } = route.params;
+    const path = `${origin}${productPath}/${productId}`;
+    const res = await axios.get(path);
+    const temp = parseProductObj(res.data);
+    if (temp.mainProp.id === COLOR_PROP_ID) {
+      temp.colors = formatColors(temp.colors, temp.offers);
+    }
+    product.value = temp;
+  } catch (err) {
+    const errorTitle = 'Не удалось загрузить данные о товаре.';
+    if (err instanceof AxiosError) loadProductError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      loadProductError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
+  } finally {
+    store.commit('setLoadingDown');
+  }
+};
+
+const updateCounter = (e: number) => {
+  qty.value = e;
+};
+
 onMounted(() => {
   loadProduct();
 });
-
 watch(product, () => {
   if (product.value) {
     if (cmpProdState.value.curOfferId) curOfferId.value = cmpProdState.value.curOfferId;

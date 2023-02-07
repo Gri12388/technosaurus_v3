@@ -52,18 +52,20 @@ import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import CartItem from '@/components/cart/CartItem.vue';
 
 import { CART_BREADCRUMBS } from '@/constants/constants';
-import { useStore } from '@/store/store';
 import { formatNumber, formatProduct } from '@/helpers/formatters';
-import { CartItemType } from '@/types/types';
+import { useStore } from '@/store/store';
+
+import type { CartItemType } from '@/types/types';
 
 const store = useStore();
 const router = useRouter();
 
-const cmpLocalCart = computed<CartItemType[]>(() => store.getters.getLocalCart);
-const cmpTotalPrice = computed<string>(() => formatNumber(store.getters.getTotalPrice));
 const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
-const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+
 const cmpIsOrderButtonDisabled = computed(() => cmpTotalProds.value === 0);
+const cmpLocalCart = computed<CartItemType[]>(() => store.getters.getLocalCart);
+const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
+const cmpTotalPrice = computed<string>(() => formatNumber(store.getters.getTotalPrice));
 
 const gotoOrderPage = () => router.push({ name: 'order' });
 </script>

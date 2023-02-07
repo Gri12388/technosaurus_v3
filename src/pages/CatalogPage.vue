@@ -34,19 +34,27 @@ import { origin, productPath } from '@/constants/paths';
 import { formatCards, formatProduct } from '@/helpers/formatters';
 import { handleAxiosError } from '@/helpers/handlers';
 import { parseProducts } from '@/helpers/parsers';
-
-import type { ErrorType, ProdCardType, QueryType } from '@/types/types';
 import { store } from '@/store/store';
 
+import type { ErrorType, ProdCardType, QueryType } from '@/types/types';
+
+const cards: Ref<ProdCardType[]> = ref([]);
+const limit = ref(defaultLimit);
 const loadProductsError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const page = ref(1);
-const limit = ref(defaultLimit);
 const pages = ref(0);
-const total = ref(0);
-const cards: Ref<ProdCardType[]> = ref([]);
 const query: Ref<QueryType> = ref({});
+const total = ref(0);
 
 const cmpProductWord = computed(() => formatProduct(total.value));
+
+const dropLoadProductsError = () => {
+  loadProductsError.value = cloneDeep(defaultError);
+};
+
+const filterProducts = (value: QueryType) => {
+  query.value = value;
+};
 
 const loadProducts = async () => {
   try {
@@ -70,15 +78,7 @@ const loadProducts = async () => {
   }
 };
 
-const filterProducts = (value: QueryType) => {
-  query.value = value;
-};
-
-const dropLoadProductsError = () => {
-  loadProductsError.value = cloneDeep(defaultError);
-};
-
-watch(query, () => loadProducts());
-watch(page, () => loadProducts());
 onMounted(() => loadProducts());
+watch(page, () => loadProducts());
+watch(query, () => loadProducts());
 </script>
