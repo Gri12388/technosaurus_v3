@@ -1,5 +1,7 @@
 <template>
   <aside class="filter">
+    <ErrorDialog :error="loadPropertiesError" @close-dialog="closeDialog" />
+
     <h2 class="filter__title">Фильтры</h2>
 
     <form class="filter__form form">
@@ -50,7 +52,8 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { cloneDeep } from 'lodash';
 import {
   computed,
   defineEmits,
@@ -61,16 +64,23 @@ import {
 
 import CategorySelect from '@/components/catalog/CategorySelect.vue';
 import ColorCheckboxItem from '@/components/catalog/ColorCheckboxItem.vue';
+import ErrorDialog from '@/components/common/ErrorDialog.vue';
 import PageLimitSelect from '@/components/catalog/PageLimitSelect.vue';
 import PropertyCheckbox from '@/components/catalog/PropertyCheckbox.vue';
 import PriceRange from '@/components/catalog/PriceRange.vue';
 
-import { COLOR_PROP_ID, defaultLimit } from '@/constants/constants';
+import { COLOR_PROP_ID, defaultError, defaultLimit } from '@/constants/constants';
 import { categoriesPath, origin } from '@/constants/paths';
+import { handleAxiosError } from '@/helpers/handlers';
 import { parseCategory } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
-import type { ColorType, PropertyType, QueryType } from '@/types/types';
+import type {
+  ColorType,
+  ErrorType,
+  PropertyType,
+  QueryType,
+} from '@/types/types';
 
 type Emits = {
   (e: 'filterProducts', value: QueryType): void,
@@ -85,6 +95,7 @@ const curCategId: Ref<number | null> = ref(null);
 const curColorsIds: Ref<number[]> = ref([]);
 const curLimit = ref(defaultLimit);
 const curProperties: Ref<{ [index: string]: string[] }> = ref({});
+const loadPropertiesError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const priceMax: Ref<string | null> = ref(null);
 const priceMin: Ref<string | null> = ref(null);
 const properties: Ref<PropertyType[]> = ref([]);
@@ -93,6 +104,10 @@ const cmpIsColorsShown = (() => !!curCategId.value
     && !!properties.value
     && !properties.value.find((item) => item.id === COLOR_PROP_ID)
 );
+
+const closeDialog = () => {
+  loadPropertiesError.value.isError = false;
+};
 
 const getQuery = () => ({
   categoryId: curCategId.value ? curCategId.value : undefined,
@@ -108,15 +123,23 @@ const filterProducts = () => {
 };
 
 const loadProperties = async () => {
-  if (curCategId.value) {
-    try {
+  try {
+    store.commit('setLoadingUp');
+    if (curCategId.value) {
       const path = `${origin}${categoriesPath}/${curCategId.value}`;
       const res = await axios.get(path);
       const category = parseCategory(res.data);
       if (category.properties) properties.value = category.properties;
-    } catch (err) {
-      console.error(err);
     }
+  } catch (err) {
+    const errorTitle = 'Свойства товаров не были загружены.';
+    if (err instanceof AxiosError) loadPropertiesError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      loadPropertiesError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 
