@@ -43,28 +43,26 @@ type Emits = {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const priceMin = ref(props.priceMin);
 const priceMax = ref(props.priceMax);
+const priceMin = ref(props.priceMin);
 
-watch(props, (value) => {
-  if (value.priceMin === null) priceMin.value = null;
-  if (value.priceMax === null) priceMax.value = null;
+watch(priceMax, (value) => {
+  const reg = /^\d+$/;
+  if (value !== null && reg.test(value)) {
+    emit('updatePriceMax', value);
+  } else priceMax.value = null;
 });
 
 watch(priceMin, (value) => {
   const reg = /^\d+$/;
   if (value !== null && reg.test(value)) {
-    priceMin.value = value;
     emit('updatePriceMin', value);
   } else priceMin.value = null;
 });
 
-watch(priceMax, (value) => {
-  const reg = /^\d+$/;
-  if (value !== null && reg.test(value)) {
-    // priceMax.value = value;
-    emit('updatePriceMax', value);
-  } else priceMax.value = null;
+watch(props, (value) => {
+  if (value.priceMin === null) priceMin.value = null;
+  if (value.priceMax === null) priceMax.value = null;
 });
 
 </script>

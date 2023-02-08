@@ -52,4 +52,5 @@ const cmpIsDialogOpen = computed({
   get: () => props.isOpened,
   set: () => closeDialog(),
 });
+
 </script>

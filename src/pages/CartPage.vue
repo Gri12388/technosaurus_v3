@@ -12,7 +12,7 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form class="cart__form form">
         <div class="cart__field">
           <ul class="cart__list">
             <CartItem
@@ -34,7 +34,7 @@
           <button
             class="cart__button button button--primery"
             :disabled="cmpIsOrderButtonDisabled"
-            @click="gotoOrderPage"
+            @click.prevent="gotoOrderPage"
           >
             Оформить заказ
           </button>

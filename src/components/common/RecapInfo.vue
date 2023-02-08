@@ -39,7 +39,7 @@ type Props = {
 
 const props = defineProps<Props>();
 
+const cmpIsDelivery = computed(() => props.deliveryPrice !== '0');
 const cmpProductWord = computed(() => formatProduct(props.totalProds));
 const cmpTotalPrice = computed<string>(() => formatNumber(props.totalPrice));
-const cmpIsDelivery = computed(() => props.deliveryPrice !== '0');
 </script>

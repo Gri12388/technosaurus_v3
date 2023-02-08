@@ -35,10 +35,10 @@ type Emits = {
   (e: 'updateCurProperties', value: { [index: string]: string[] }): void,
 };
 
-const curProperties: Ref<string[]> = ref([]);
-
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
+
+const curProperties: Ref<string[]> = ref([]);
 
 watch(curProperties, () => {
   emit('updateCurProperties', { [props.property.code]: curProperties.value });

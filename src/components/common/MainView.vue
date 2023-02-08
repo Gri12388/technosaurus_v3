@@ -35,15 +35,9 @@ import type { ErrorType } from '@/types/types';
 
 const store = useStore();
 
-const cmpIsLoading = computed(() => store.getters.getLoading > 0);
-
 const cmpCategoriesError: Ref<ErrorType> = computed(() => store.getters.getCategoriesError);
 const cmpColorsError: Ref<ErrorType> = computed(() => store.getters.getColorsError);
 const cmpServerCartError: Ref<ErrorType> = computed(() => store.getters.getServerCartError);
-
-const cmpIsRouterVeiwShown = computed(() => !cmpCategoriesError.value.isError
-  && !cmpColorsError.value.isError
-  && !cmpServerCartError.value.isError);
 
 const cmpFallbackHeight = computed(() => {
   const alerts = [
@@ -51,10 +45,13 @@ const cmpFallbackHeight = computed(() => {
     cmpColorsError.value.isError,
     cmpServerCartError.value.isError,
   ].filter((item) => item);
-
   if (alerts.length > 2) return 'h-25';
   else return 'h-50';
 });
+const cmpIsLoading = computed(() => store.getters.getLoading > 0);
+const cmpIsRouterVeiwShown = computed(() => !cmpCategoriesError.value.isError
+  && !cmpColorsError.value.isError
+  && !cmpServerCartError.value.isError);
 
 onMounted(() => {
   store.dispatch('loadCategories');
@@ -63,7 +60,6 @@ onMounted(() => {
   if (accessKey) store.commit('setAccessKey', { accessKey });
   store.dispatch('loadCart');
 });
-
 </script>
 
 <style scoped>

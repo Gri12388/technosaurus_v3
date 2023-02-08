@@ -12,7 +12,7 @@ import { defineProps } from 'vue';
 type Props = {
   title: string;
   error: string;
-}
+};
 
 defineProps<Props>();
 </script>

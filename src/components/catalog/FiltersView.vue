@@ -81,43 +81,18 @@ const emit = defineEmits<Emits>();
 
 const cmpColors = computed<ColorType[]>(() => store.getters.getColors);
 
-const priceMin: Ref<string | null> = ref(null);
-const priceMax: Ref<string | null> = ref(null);
 const curCategId: Ref<number | null> = ref(null);
 const curColorsIds: Ref<number[]> = ref([]);
 const curLimit = ref(defaultLimit);
 const curProperties: Ref<{ [index: string]: string[] }> = ref({});
+const priceMax: Ref<string | null> = ref(null);
+const priceMin: Ref<string | null> = ref(null);
 const properties: Ref<PropertyType[]> = ref([]);
 
 const cmpIsColorsShown = (() => !!curCategId.value
     && !!properties.value
     && !properties.value.find((item) => item.id === COLOR_PROP_ID)
 );
-
-const loadProperties = async () => {
-  if (curCategId.value) {
-    try {
-      const path = `${origin}${categoriesPath}/${curCategId.value}`;
-      const res = await axios.get(path);
-      const category = parseCategory(res.data);
-      if (category.properties) properties.value = category.properties;
-    } catch (err) {
-      console.error(err);
-    }
-  }
-};
-
-const updateCurProperties = (e: { [index: string]: string[] }) => {
-  curProperties.value = { ...curProperties.value, ...e };
-};
-
-const updatePriceMin = (e: string | null) => {
-  priceMin.value = e;
-};
-
-const updatePriceMax = (e: string | null) => {
-  priceMax.value = e;
-};
 
 const getQuery = () => ({
   categoryId: curCategId.value ? curCategId.value : undefined,
@@ -132,6 +107,19 @@ const filterProducts = () => {
   emit('filterProducts', query);
 };
 
+const loadProperties = async () => {
+  if (curCategId.value) {
+    try {
+      const path = `${origin}${categoriesPath}/${curCategId.value}`;
+      const res = await axios.get(path);
+      const category = parseCategory(res.data);
+      if (category.properties) properties.value = category.properties;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+};
+
 const resetFields = () => {
   priceMin.value = null;
   priceMax.value = null;
@@ -140,6 +128,18 @@ const resetFields = () => {
   curProperties.value = {};
   properties.value = [];
   filterProducts();
+};
+
+const updateCurProperties = (e: { [index: string]: string[] }) => {
+  curProperties.value = { ...curProperties.value, ...e };
+};
+
+const updatePriceMax = (e: string | null) => {
+  priceMax.value = e;
+};
+
+const updatePriceMin = (e: string | null) => {
+  priceMin.value = e;
 };
 
 watch(curCategId, loadProperties);

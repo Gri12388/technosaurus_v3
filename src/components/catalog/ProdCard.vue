@@ -93,18 +93,15 @@ const store = useStore();
 const props = defineProps<Props>();
 
 const addProductError:Ref<ErrorType> = ref(cloneDeep(defaultError));
-
-const isLoading = ref(false);
-const isShown = ref(true);
-
 const curColorId = ref(initCurColorId(props.card));
 const curOfferId = ref(initCurOfferId(props.card));
-const curTitle = ref(initCurTitle(props.card));
 const curPrice = ref(initCurPrice(props.card));
+const curTitle = ref(initCurTitle(props.card));
+const isLoading = ref(false);
+const isShown = ref(true);
 const mainProp = ref(initMainProp(props.card));
 
 const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
-
 const cmpCurColorId = computed({
   get: () => curColorId.value,
   set: (value: number | null) => {
@@ -119,7 +116,6 @@ const cmpCurColorId = computed({
     isShown.value = true;
   },
 });
-
 const cmpCurOfferId = computed({
   get: () => curOfferId.value,
   set: (value: number | null) => {
@@ -134,26 +130,10 @@ const cmpCurOfferId = computed({
     isShown.value = true;
   },
 });
-
 const cmpPrice = computed(() => {
   if (curPrice.value) return formatNumber(curPrice.value);
   else return null;
 });
-
-const saveProdState = () => {
-  const prodState: ProdStateType = {
-    curColorId: curColorId.value,
-    curOfferId: curOfferId.value,
-    curPrice: curPrice.value,
-    curTitle: curTitle.value,
-  };
-
-  store.commit('setProdState', { prodState });
-};
-
-const closeDialog = () => {
-  addProductError.value.isError = false;
-};
 
 const addProduct = async () => {
   try {
@@ -178,6 +158,20 @@ const addProduct = async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const closeDialog = () => {
+  addProductError.value.isError = false;
+};
+
+const saveProdState = () => {
+  const prodState: ProdStateType = {
+    curColorId: curColorId.value,
+    curOfferId: curOfferId.value,
+    curPrice: curPrice.value,
+    curTitle: curTitle.value,
+  };
+  store.commit('setProdState', { prodState });
 };
 </script>
 

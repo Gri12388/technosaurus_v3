@@ -50,14 +50,14 @@ const emit = defineEmits<Emits>();
 
 const counter = ref(props.qty.toString());
 
-const increaseCounterByOne = () => {
-  const num = +counter.value;
-  counter.value = (num + 1).toString();
-};
-
 const decreaseCounterByOne = () => {
   const num = +counter.value;
   counter.value = (num - 1).toString();
+};
+
+const increaseCounterByOne = () => {
+  const num = +counter.value;
+  counter.value = (num + 1).toString();
 };
 
 watch(counter, (value) => {
