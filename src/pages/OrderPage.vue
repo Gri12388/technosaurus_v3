@@ -1,5 +1,7 @@
 <template>
     <main class="content container">
+    <ErrorAlert :error="loadPaymentListError" />
+    <ErrorAlert :error="loadDeliveryListError" />
     <div class="content__top">
       <BreadCrumbs :breadcrumbs="ORDER_BREADCRUMBS"/>
 
@@ -123,12 +125,18 @@ import { useRouter } from 'vue-router';
 
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import DeliveryRadioItem from '@/components/order/DeliveryRadioItem.vue';
+import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import InputFormField from '@/components/order/InputFormField.vue';
 import PaymentRadioItem from '@/components/order/PaymentRadioItem.vue';
 import RecapInfo from '@/components/common/RecapInfo.vue';
 import TextAreaFormField from '@/components/order/TextAreaFormField.vue';
 
-import { defaultOrderFieldErrors, defaultOrderFieldsValues, ORDER_BREADCRUMBS } from '@/constants/constants';
+import {
+  defaultError,
+  defaultOrderFieldErrors,
+  defaultOrderFieldsValues,
+  ORDER_BREADCRUMBS,
+} from '@/constants/constants';
 import {
   deliveryPath,
   orderPath,
@@ -136,6 +144,7 @@ import {
   paymentPath,
 } from '@/constants/paths';
 import { formatProduct } from '@/helpers/formatters';
+import { handleAxiosError } from '@/helpers/handlers';
 import {
   parseDeliveries,
   parseOrderError,
@@ -146,6 +155,7 @@ import { useStore } from '@/store/store';
 
 import type {
   CartItemType,
+  ErrorType,
   DeliveryType,
   OrderFieldsErrorsType,
   OrderFieldsValuesType,
@@ -156,6 +166,8 @@ const store = useStore();
 const router = useRouter();
 
 const deliveries: Ref<DeliveryType[]> = ref([]);
+const loadPaymentListError: Ref<ErrorType> = ref(cloneDeep(defaultError));
+const loadDeliveryListError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const orderFieldsErrors: Ref<OrderFieldsErrorsType> = ref(cloneDeep(defaultOrderFieldErrors));
 const orderFieldsValues: Ref<OrderFieldsValuesType> = ref(cloneDeep(defaultOrderFieldsValues));
 const payments: Ref<PaymentType[]> = ref([]);
@@ -176,6 +188,8 @@ const cmpTotalPrice = computed<number>(() => store.getters.getTotalPrice);
 
 const loadPaymentList = async () => {
   try {
+    store.commit('setLoadingUp');
+    loadPaymentListError.value.isError = false;
     if (deliveries.value.length > 0) {
       const path = `${origin}${paymentPath}`;
       const config = { params: { deliveryTypeId: orderFieldsValues.value.deliveryTypeId } };
@@ -184,19 +198,35 @@ const loadPaymentList = async () => {
       if (payments.value.length > 0) orderFieldsValues.value.paymentTypeId = payments.value[0].id;
     } else throw new Error('Array "deliveries" is empty');
   } catch (err) {
-    console.error(err);
+    const errorTitle = 'Список платежных инструментов не был подгружен.';
+    if (err instanceof AxiosError) loadPaymentListError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      loadPaymentListError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 
 const loadDeliveryList = async () => {
   try {
+    store.commit('setLoadingUp');
+    loadDeliveryListError.value.isError = false;
     const path = `${origin}${deliveryPath}`;
     const res = await axios.get(path);
     deliveries.value = parseDeliveries(res.data);
     if (deliveries.value.length > 0) orderFieldsValues.value.deliveryTypeId = deliveries.value[0].id;
     loadPaymentList();
   } catch (err) {
-    console.error(err);
+    const errorTitle = 'Перечень способов доставки не был подгружен.';
+    if (err instanceof AxiosError) loadDeliveryListError.value = handleAxiosError(err, errorTitle);
+    else if (err instanceof Error) {
+      console.error('err:', err);
+      loadDeliveryListError.value = { isError: true, errorMessage: err.message, errorTitle };
+    }
+  } finally {
+    store.commit('setLoadingDown');
   }
 };
 

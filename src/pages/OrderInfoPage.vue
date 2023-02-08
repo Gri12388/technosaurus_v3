@@ -1,6 +1,6 @@
 <template>
   <main class="content container" :class="cmpFallbackClass">
-    <ErrorAlert :error="loadOrderInfoError" @drop-error="dropOrderInfoError" />
+    <ErrorAlert :error="loadOrderInfoError" />
 
     <div class="content__top">
       <BreadCrumbs :breadcrumbs="ORDER_BREADCRUMBS" />
@@ -114,13 +114,10 @@ const cmpFallbackClass = computed(() => {
 });
 const cmpTotalProds = computed(() => cmpOrderInfo.value.cartItems.length);
 
-const dropOrderInfoError = () => {
-  loadOrderInfoError.value = cloneDeep(defaultError);
-};
-
 const loadOrderInfo = async () => {
   try {
     store.commit('setLoadingUp');
+    loadOrderInfoError.value.isError = false;
     if (cmpAccessKey.value) {
       const path = `${origin}${orderPath}/${route.params.orderId}`;
       const config = { params: { userAccessKey: cmpAccessKey.value } };

@@ -1,6 +1,6 @@
 <template>
   <main class="content container">
-    <ErrorAlert :error="loadProductsError" @drop-error="dropLoadProductsError" />
+    <ErrorAlert :error="loadProductsError" />
 
     <div class="content__top content__top--catalog">
       <h1 class="content__title">Каталог</h1>
@@ -48,10 +48,6 @@ const total = ref(0);
 
 const cmpProductWord = computed(() => formatProduct(total.value));
 
-const dropLoadProductsError = () => {
-  loadProductsError.value = cloneDeep(defaultError);
-};
-
 const filterProducts = (value: QueryType) => {
   query.value = value;
 };
@@ -59,6 +55,7 @@ const filterProducts = (value: QueryType) => {
 const loadProducts = async () => {
   try {
     store.commit('setLoadingUp');
+    loadProductsError.value.isError = false;
     const path = `${origin}${productPath}`;
     const config = { params: { page: page.value, limit: limit.value, ...query.value } };
     const res = await axios.get(path, config);

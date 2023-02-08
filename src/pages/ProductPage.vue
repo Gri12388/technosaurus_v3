@@ -1,7 +1,7 @@
 <template>
   <main class="content container" :class="cmpFallbackClass">
-    <ErrorAlert :error="addProductError" @drop-error="dropAddProductError" />
-    <ErrorAlert :error="loadProductError" @drop-error="dropLoadProductError" />
+    <ErrorAlert :error="addProductError" />
+    <ErrorAlert :error="loadProductError" />
     <SuccessDialog :is-opened="isDialogOpened" />
 
     <div class="content__top">
@@ -187,6 +187,7 @@ const cmpProdState = computed<ProdStateType>(() => store.getters.getProdState);
 const addProduct = async () => {
   try {
     store.commit('setLoadingUp');
+    loadProductError.value.isError = false;
     if (cmpCurOfferId.value && cmpCurColorId.value && cmpAccessKey.value) {
       const path = `${origin}${cartProdsPath}`;
       const config = { params: { userAccessKey: cmpAccessKey.value } };
@@ -210,17 +211,10 @@ const addProduct = async () => {
   }
 };
 
-const dropAddProductError = () => {
-  addProductError.value = cloneDeep(defaultError);
-};
-
-const dropLoadProductError = () => {
-  loadProductError.value = cloneDeep(defaultError);
-};
-
 const loadProduct = async () => {
   try {
     store.commit('setLoadingUp');
+    loadProductError.value.isError = false;
     const { productId } = route.params;
     const path = `${origin}${productPath}/${productId}`;
     const res = await axios.get(path);
