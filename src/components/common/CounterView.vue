@@ -3,6 +3,7 @@
     <button
       type="button"
       aria-label="Убрать один товар"
+      :disabled="cmpIsLoading"
       @click="decreaseCounterByOne"
     >
       <svg width="12" height="12" fill="#000">
@@ -14,12 +15,14 @@
         id="counter"
         type="text"
         name="count"
+        :disabled="cmpIsLoading"
         v-model="counter"
       />
     </label>
     <button
       type="button"
       aria-label="Добавить один товар"
+      :disabled="cmpIsLoading"
       @click="increaseCounterByOne"
     >
       <svg width="12" height="12" fill="#000">
@@ -31,11 +34,14 @@
 
 <script setup lang="ts">
 import {
+  computed,
   defineProps,
   defineEmits,
   ref,
   watch,
 } from 'vue';
+
+import { useStore } from '@/store/store';
 
 type Props = {
   qty: number;
@@ -45,10 +51,13 @@ type Emits = {
   (e: 'updateCounter', value: number): void;
 };
 
+const store = useStore();
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const counter = ref(props.qty.toString());
+
+const cmpIsLoading = computed(() => store.getters.getLoading > 0);
 
 const decreaseCounterByOne = () => {
   const num = +counter.value;
