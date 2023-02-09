@@ -118,6 +118,9 @@ const getQuery = () => ({
 });
 
 const filterProducts = () => {
+  if (priceMin.value && priceMax.value && +priceMax.value <= +priceMin.value) {
+    priceMax.value = null;
+  }
   const query = getQuery();
   emit('filterProducts', query);
 };

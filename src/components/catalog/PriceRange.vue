@@ -48,15 +48,17 @@ const priceMin = ref(props.priceMin);
 
 watch(priceMax, (value) => {
   const reg = /^\d+$/;
-  if (value !== null && reg.test(value)) {
+  if (value && reg.test(value) && +value > 0) {
     emit('updatePriceMax', value);
+    priceMax.value = value;
   } else priceMax.value = null;
 });
 
 watch(priceMin, (value) => {
   const reg = /^\d+$/;
-  if (value !== null && reg.test(value)) {
+  if (value && reg.test(value) && +value > 0) {
     emit('updatePriceMin', value);
+    priceMin.value = value;
   } else priceMin.value = null;
 });
 
