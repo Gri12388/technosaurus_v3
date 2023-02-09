@@ -51,7 +51,10 @@ watch(priceMax, (value) => {
   if (value && reg.test(value) && +value > 0) {
     emit('updatePriceMax', value);
     priceMax.value = value;
-  } else priceMax.value = null;
+  } else {
+    emit('updatePriceMax', null);
+    priceMax.value = null;
+  }
 });
 
 watch(priceMin, (value) => {
@@ -59,7 +62,10 @@ watch(priceMin, (value) => {
   if (value && reg.test(value) && +value > 0) {
     emit('updatePriceMin', value);
     priceMin.value = value;
-  } else priceMin.value = null;
+  } else {
+    emit('updatePriceMin', null);
+    priceMin.value = null;
+  }
 });
 
 watch(props, (value) => {
