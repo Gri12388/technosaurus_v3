@@ -16,7 +16,7 @@
 
       <CategorySelect v-model:cur-categ-id="curCategId"/>
 
-      <fieldset class="form__block" v-if="cmpIsColorsShown()">
+      <fieldset class="form__block" v-if="cmpIsColorsShown">
         <legend class="form__legend">Цвет</legend>
         <ul class="colors">
           <ColorCheckboxItem
@@ -44,7 +44,12 @@
       >
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button" @click="resetFields">
+      <button
+      v-if="cmpIsResetButtonShown"
+      class="filter__reset button button--second"
+      type="button"
+      @click="resetFields"
+    >
         Сбросить
       </button>
     </form>
@@ -100,10 +105,17 @@ const priceMax: Ref<string | null> = ref(null);
 const priceMin: Ref<string | null> = ref(null);
 const properties: Ref<PropertyType[]> = ref([]);
 
-const cmpIsColorsShown = (() => !!curCategId.value
-    && !!properties.value
-    && !properties.value.find((item) => item.id === COLOR_PROP_ID)
-);
+const cmpIsColorsShown = computed(() => (
+  !!curCategId.value
+  && !!properties.value
+  && !properties.value.find((item) => item.id === COLOR_PROP_ID)
+));
+
+const cmpIsResetButtonShown = computed(() => (
+  priceMin.value !== null
+  || priceMax.value !== null
+  || curCategId.value !== null
+));
 
 const closeDialog = () => {
   loadPropertiesError.value.isError = false;
