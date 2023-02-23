@@ -32,8 +32,8 @@
           </p>
 
           <button
+            v-if="cmpIsOrderButtonShown"
             class="cart__button button button--primery"
-            :disabled="cmpIsOrderButtonDisabled"
             @click.prevent="gotoOrderPage"
           >
             Оформить заказ
@@ -62,7 +62,7 @@ const router = useRouter();
 
 const cmpTotalProds = computed<number>(() => store.getters.getTotalProds);
 
-const cmpIsOrderButtonDisabled = computed(() => cmpTotalProds.value === 0);
+const cmpIsOrderButtonShown = computed(() => cmpTotalProds.value !== 0);
 const cmpLocalCart = computed<CartItemType[]>(() => store.getters.getLocalCart);
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
 const cmpTotalPrice = computed<string>(() => formatNumber(store.getters.getTotalPrice));
