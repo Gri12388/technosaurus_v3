@@ -140,8 +140,18 @@ const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 const cmpBreadCrumbsArr = computed<BreadCrumbType[]>(() => {
   if (product.value && curTitle.value) {
     return [
-      { id: 0, title: 'Каталог', link: 'catalog' },
-      { id: 1, title: product.value.category.title, link: 'catalog' },
+      {
+        id: 0,
+        title: 'Каталог',
+        link: 'catalog',
+        action: () => store.commit('dropCategoryId'),
+      },
+      {
+        id: 1,
+        title: product.value.category.title,
+        link: 'catalog',
+        action: () => store.commit('setCategoryId', { categoryId: product.value?.category.id }),
+      },
       { id: 2, title: curTitle.value },
     ];
   } else return [{ id: 0, title: 'Вернуться в каталог', link: 'catalog' }];

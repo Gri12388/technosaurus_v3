@@ -1,7 +1,7 @@
 <template>
   <main class="content container">
     <div class="content__top">
-      <BreadCrumbs :breadcrumbs="CART_BREADCRUMBS"/>
+      <BreadCrumbs :breadcrumbs="breadcrumbs"/>
 
       <h1 class="content__title">
         Корзина
@@ -51,11 +51,10 @@ import { useRouter } from 'vue-router';
 import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import CartItem from '@/components/cart/CartItem.vue';
 
-import { CART_BREADCRUMBS } from '@/constants/constants';
 import { formatNumber, formatProduct } from '@/helpers/formatters';
 import { useStore } from '@/store/store';
 
-import type { CartItemType } from '@/types/types';
+import type { BreadCrumbType, CartItemType } from '@/types/types';
 
 const store = useStore();
 const router = useRouter();
@@ -66,6 +65,16 @@ const cmpIsOrderButtonShown = computed(() => cmpTotalProds.value !== 0);
 const cmpLocalCart = computed<CartItemType[]>(() => store.getters.getLocalCart);
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
 const cmpTotalPrice = computed<string>(() => formatNumber(store.getters.getTotalPrice));
+
+const breadcrumbs: BreadCrumbType[] = [
+  {
+    id: 0,
+    title: 'Каталог',
+    link: 'catalog',
+    action: () => store.commit('dropCategoryId'),
+  },
+  { id: 1, title: 'Корзина' },
+];
 
 const gotoOrderPage = () => router.push({ name: 'order' });
 </script>

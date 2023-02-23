@@ -62,6 +62,7 @@ import { cloneDeep } from 'lodash';
 import {
   computed,
   defineEmits,
+  onMounted,
   ref,
   Ref,
   watch,
@@ -105,6 +106,7 @@ const priceMax: Ref<string | null> = ref(null);
 const priceMin: Ref<string | null> = ref(null);
 const properties: Ref<PropertyType[]> = ref([]);
 
+const cmpCategoryId = computed<number | null>(() => store.getters.getCategoryId);
 const cmpIsColorsShown = computed(() => (
   !!curCategId.value
   && !!properties.value
@@ -179,6 +181,13 @@ const updatePriceMax = (e: string | null) => {
 const updatePriceMin = (e: string | null) => {
   priceMin.value = e;
 };
+
+onMounted(() => {
+  if (cmpCategoryId.value) {
+    curCategId.value = cmpCategoryId.value;
+    filterProducts();
+  }
+});
 
 watch(curCategId, loadProperties);
 </script>

@@ -9,6 +9,7 @@
         v-if="breadcrumb.link"
         class="breadcrumbs__link"
         :to="{ name: breadcrumb.link }"
+        @click="breadcrumb.action"
       >
         {{ breadcrumb.title }}
       </router-link>

@@ -3,7 +3,7 @@
     <ErrorAlert :error="loadOrderInfoError" />
 
     <div class="content__top">
-      <BreadCrumbs :breadcrumbs="ORDER_BREADCRUMBS" />
+      <BreadCrumbs :breadcrumbs="breadcrumbs" />
 
       <h1 class="content__title" v-if="cmpOrderId">
         Заказ оформлен <span>№ {{ cmpOrderId }}</span>
@@ -88,13 +88,13 @@ import BreadCrumbs from '@/components/common/BreadCrumbs.vue';
 import ErrorAlert from '@/components/common/ErrorAlert.vue';
 import RecapInfo from '@/components/common/RecapInfo.vue';
 
-import { defaultError, ORDER_BREADCRUMBS } from '@/constants/constants';
+import { defaultError } from '@/constants/constants';
 import { orderPath, origin } from '@/constants/paths';
 import { handleAxiosError } from '@/helpers/handlers';
 import { parseOrderObj } from '@/helpers/parsers';
 import { useStore } from '@/store/store';
 
-import type { ErrorType, OrderInfoType } from '@/types/types';
+import type { BreadCrumbType, ErrorType, OrderInfoType } from '@/types/types';
 
 const store = useStore();
 const route = useRoute();
@@ -113,6 +113,17 @@ const cmpFallbackClass = computed(() => {
   return '';
 });
 const cmpTotalProds = computed(() => cmpOrderInfo.value.cartItems.length);
+
+const breadcrumbs: BreadCrumbType[] = [
+  {
+    id: 0,
+    title: 'Каталог',
+    link: 'catalog',
+    action: () => store.commit('dropCategoryId'),
+  },
+  { id: 1, title: 'Корзина', link: 'cart' },
+  { id: 1, title: 'Оформление заказа' },
+];
 
 const loadOrderInfo = async () => {
   try {

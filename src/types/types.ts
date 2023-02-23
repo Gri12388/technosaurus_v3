@@ -1,6 +1,7 @@
 export type BreadCrumbType = {
   id: number;
   title: string;
+  action?: () => void;
   link?: string;
 };
 

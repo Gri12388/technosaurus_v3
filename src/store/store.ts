@@ -30,6 +30,7 @@ export type State = {
   accessKey: string | null;
   categories: CategoryType[];
   categoriesError: ErrorType;
+  categoryId: number | null;
   colors: ColorType[];
   colorsError: ErrorType;
   loading: number;
@@ -49,6 +50,7 @@ export const store = createStore<State>({
     accessKey: null,
     categories: [],
     categoriesError: cloneDeep(defaultError),
+    categoryId: null,
     colors: [],
     colorsError: cloneDeep(defaultError),
     loading: 0,
@@ -62,6 +64,7 @@ export const store = createStore<State>({
     getAccessKey: (state) => state.accessKey,
     getCategories: (state) => state.categories,
     getCategoriesError: (state) => state.categoriesError,
+    getCategoryId: (state) => state.categoryId,
     getColors: (state) => state.colors,
     getColorsError: (state) => state.colorsError,
     getLoading: (state) => state.loading,
@@ -81,6 +84,9 @@ export const store = createStore<State>({
     },
     dropCategoriesError: (state) => {
       state.categoriesError = cloneDeep(defaultError);
+    },
+    dropCategoryId: (state) => {
+      state.categoryId = null;
     },
     dropColors: (state) => {
       state.colors = [];
@@ -114,6 +120,9 @@ export const store = createStore<State>({
     },
     setCategoriesError: (state, payload: { categoriesError: ErrorType }) => {
       state.categoriesError = payload.categoriesError;
+    },
+    setCategoryId: (state, payload: { categoryId: number }) => {
+      state.categoryId = payload.categoryId;
     },
     setColors: (state, payload: { colors: ColorType[] }) => {
       state.colors = payload.colors;

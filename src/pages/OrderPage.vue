@@ -3,7 +3,7 @@
     <ErrorAlert :error="loadPaymentListError" />
     <ErrorAlert :error="loadDeliveryListError" />
     <div class="content__top">
-      <BreadCrumbs :breadcrumbs="ORDER_BREADCRUMBS"/>
+      <BreadCrumbs :breadcrumbs="breadcrumbs"/>
 
       <h1 class="content__title">
         Корзина
@@ -135,7 +135,6 @@ import {
   defaultError,
   defaultOrderFieldErrors,
   defaultOrderFieldsValues,
-  ORDER_BREADCRUMBS,
 } from '@/constants/constants';
 import {
   deliveryPath,
@@ -154,6 +153,7 @@ import {
 import { useStore } from '@/store/store';
 
 import type {
+  BreadCrumbType,
   CartItemType,
   ErrorType,
   DeliveryType,
@@ -185,6 +185,17 @@ const cmpDeliveryPrice = computed(() => {
 const cmpIsError = computed(() => !!Object.values(orderFieldsErrors.value).find((item) => item !== ''));
 const cmpProductWord = computed(() => formatProduct(cmpTotalProds.value));
 const cmpTotalPrice = computed<number>(() => store.getters.getTotalPrice);
+
+const breadcrumbs: BreadCrumbType[] = [
+  {
+    id: 0,
+    title: 'Каталог',
+    link: 'catalog',
+    action: () => store.commit('dropCategoryId'),
+  },
+  { id: 1, title: 'Корзина', link: 'cart' },
+  { id: 1, title: 'Оформление заказа' },
+];
 
 const loadPaymentList = async () => {
   try {
