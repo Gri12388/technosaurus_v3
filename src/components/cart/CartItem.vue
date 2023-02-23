@@ -11,17 +11,17 @@
     <h3 class="product__title">
       {{ cartItem.offer.title }}
     </h3>
-    <p class="product__info product__info--color" v-if="cmpIsColorMainProp">
+    <p class="product__info product__info--color">
       Цвет:
       <span>
         <i :style="`background-color: ${ cartItem.color.code }`"></i>
         {{ cartItem.color.title }}
       </span>
     </p>
-    <p class="product__info" v-else>
+    <p class="product__info" :class="cmpMoveProdInfoClass" v-if="!cmpIsColorMainProp">
       {{ cartItem.mainProp.title }}: <span>{{ cartItem.offer.value }}</span>
     </p>
-    <span class="product__code">
+    <span class="product__code" :class="cmpMoveArticleClass">
       Артикул: {{ cartItem.offer.id }}
     </span>
 
@@ -83,6 +83,14 @@ const deleteProductError: Ref<ErrorType> = ref(cloneDeep(defaultError));
 const cmpAccessKey = computed<string | null>(() => store.getters.getAccessKey);
 const cmpIsColorMainProp = computed(() => props.cartItem.mainProp.id === COLOR_PROP_ID);
 const cmpSum = computed(() => formatNumber(qty.value * props.cartItem.offer.price));
+const cmpMoveArticleClass = computed(() => {
+  if (!cmpIsColorMainProp.value) return 'move__article';
+  return '';
+});
+const cmpMoveProdInfoClass = computed(() => {
+  if (!cmpIsColorMainProp.value) return 'move__prod--info';
+  return '';
+});
 
 const updateCounter = (e: number) => {
   store.commit('setLocalCartItemQty', { id: props.cartItem.id, qty: e });
@@ -144,5 +152,12 @@ watch(props, () => {
   display: block;
   height: 120px;
   margin: 0 auto;
+}
+
+.move__prod--info {
+  grid-row: 3/4;
+}
+.move__article {
+  grid-row: 4/5;
 }
 </style>

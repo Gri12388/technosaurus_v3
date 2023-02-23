@@ -110,6 +110,7 @@ const cmpCurColorId = computed({
       if (found && found.offer) {
         curTitle.value = found.offer.title;
         curPrice.value = found.offer.price;
+        curOfferId.value = found.offer.id;
       }
     }
     curColorId.value = value;
